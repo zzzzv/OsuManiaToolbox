@@ -2,6 +2,7 @@
 using System.Windows.Documents;
 using System.Windows.Media;
 using OsuManiaToolbox.Regrade;
+using OsuManiaToolbox.StarRating;
 
 namespace OsuManiaToolbox;
 
@@ -12,12 +13,14 @@ public partial class MainWindow : Window
 {
     public Settings Settings { get; }
     public RegradeView Regrade { get; }
+    public StarRatingView StarRating { get; }
 
     public MainWindow()
     {
         InitializeComponent();
         Settings = Settings.Load();
         Regrade = new RegradeView(Settings, new Logger(AppendLog, "Regrade"));
+        StarRating = new StarRatingView(Settings, new Logger(AppendLog, "StarRating"));
 
         DataContext = this;
 
@@ -29,7 +32,7 @@ public partial class MainWindow : Window
         Dispatcher.Invoke(() =>
         {
             var paragraph = new Paragraph();
-            var run = new Run($"[{DateTime.Now:HH:mm:ss}] [{log.Source}] {log.Message}");
+            var run = new Run($"[{DateTime.Now:HH:mm:ss}][{log.Source}]{log.Message}");
 
             switch (log.Level)
             {

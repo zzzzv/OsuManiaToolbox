@@ -9,6 +9,8 @@ using OsuParsers.Decoders;
 using OsuParsers.Enums;
 using OsuParsers.Enums.Database;
 using OsuManiaToolbox.Regrade;
+using OsuParsers.Database.Objects;
+using OsuManiaToolbox.StarRating;
 
 namespace OsuManiaToolbox;
 
@@ -27,6 +29,12 @@ public partial class Settings : ObservableObject
     public string CollectionDbPath => Path.Combine(OsuPath, "collection.db");
 
     public RegradeSettings Regrade { get; set; } = new();
+    public StarRatingSettings StarRating { get; set; } = new();
+
+    public string GetBeatmapPath(DbBeatmap beatmap)
+    {
+        return Path.Combine(OsuPath, "Songs", beatmap.FolderName, beatmap.FileName);
+    }
 
     public void Save()
     {

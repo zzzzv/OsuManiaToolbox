@@ -1,12 +1,8 @@
-﻿using OsuParsers.Database;
-using OsuParsers.Decoders;
-using OsuParsers.Enums;
+﻿using OsuParsers.Decoders;
 using OsuParsers.Enums.Database;
 using OsuParsers.Database.Objects;
-using System.Collections.ObjectModel;
 using System.IO;
 using System.Windows.Input;
-using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
 namespace OsuManiaToolbox.Regrade;
@@ -27,36 +23,52 @@ public partial class RegradeView
 
     private void RegradeRun()
     {
-        var scoreDb = DatabaseDecoder.DecodeScores(_settings.ScoreDbPath);
-        var scoreDict = scoreDb.Scores.ToDictionary(x => x.Item1, x => x.Item2);
-        var osuDb = DatabaseDecoder.DecodeOsu(_settings.OsuDbPath);
-        _logger.Info($"共有{osuDb.BeatmapCount}张谱面");
-
-        int count = 0;
-        foreach (var beatmap in osuDb.Beatmaps)
+        try
         {
-            if (beatmap.MD5Hash == null) continue;
+            var scoreDb = DatabaseDecoder.DecodeScores(_settings.ScoreDbPath);
+            var scoreDict = scoreDb.Scores.ToDictionary(x => x.Item1, x => x.Item2);
+            var osuDb = DatabaseDecoder.DecodeOsu(_settings.OsuDbPath);
+            var beatmaps = osuDb.ManiaBeatmaps().ToArray();
+            _logger.Info($"共有{beatmaps}张谱面");
 
-            var scores = scoreDict.GetValueOrDefault(beatmap.MD5Hash);
-            if (scores == null) continue;
-
-            var grade = GetGrade(scores, _settings.Regrade);
-            if (grade != null)
+            int count = 0;
+            foreach (var beatmap in beatmaps)
             {
-                beatmap.ManiaGrade = grade.Value;
-                count++;
+                if (beatmap.MD5Hash == null) continue;
+
+                var scores = scoreDict.GetValueOrDefault(beatmap.MD5Hash);
+                if (scores == null) continue;
+
+                var grade = GetGrade(scores, _settings.Regrade);
+                if (grade != null)
+                {
+                    beatmap.ManiaGrade = grade.Value;
+                    count++;
+                }
+            }
+            _logger.Info($"已处理{count}张谱面");
+
+            if (_settings.BackupDb)
+            {
+                var backupPath = Utils.BackupFile(_settings.OsuDbPath);
+                _logger.Info($"已备份{Path.GetFileName(_settings.OsuDbPath)}到{backupPath}");
+            }
+
+            osuDb.Save(_settings.OsuDbPath);
+            _logger.Info($"{Path.GetFileName(_settings.OsuDbPath)}已保存");
+        }
+        catch (FileNotFoundException ex)
+        {
+            _logger.Error($"文件未找到: {ex.FileName}");
+        }
+        catch (Exception ex)
+        {
+            _logger.Error(ex.Message);
+            if(ex.StackTrace != null)
+            {
+                _logger.Error(ex.StackTrace);
             }
         }
-        _logger.Info($"已处理{count}张谱面");
-
-        if(_settings.BackupDb)
-        {
-            var backupPath = Utils.BackupFile(_settings.OsuDbPath);
-            _logger.Info($"已备份{Path.GetFileName(_settings.OsuDbPath)}到{backupPath}");
-        }
-
-        osuDb.Save(_settings.OsuDbPath);
-        _logger.Info($"{Path.GetFileName(_settings.OsuDbPath)}已保存");
     }
 
     private static Grade? GetGrade(IEnumerable<Score> scores, RegradeSettings settings)

@@ -1,4 +1,5 @@
-﻿using OsuParsers.Database.Objects;
+﻿using OsuParsers.Database;
+using OsuParsers.Database.Objects;
 using OsuParsers.Enums;
 
 namespace OsuManiaToolbox;
@@ -21,7 +22,20 @@ public static class Extensions
             Mods.Easy => "EZ",
             Mods.HardRock => "HR",
             Mods.NoFail => "NF",
-            _ => mod.ToString(),
+            Mods.Mirror => "MR",
+            _ => string.Empty,
         };
+    }
+
+    public static string Acronyms(this Mods mods)
+    {
+        return string.Join('&', Enum.GetValues<Mods>()
+            .Where(x => x != Mods.None && mods.HasFlag(x))
+            .Select(x => x.Acronym()));
+    }
+
+    public static IEnumerable<DbBeatmap> ManiaBeatmaps(this OsuDatabase osuDb)
+    {
+        return osuDb.Beatmaps.Where(x => x.Ruleset == Ruleset.Mania);
     }
 }

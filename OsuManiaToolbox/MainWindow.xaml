@@ -7,14 +7,14 @@
         xmlns:regrade="clr-namespace:OsuManiaToolbox.Regrade"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance Type=local:MainWindow, IsDesignTimeCreatable=True}"
-        Title="MainWindow" Height="450" Width="800">
+        Title="osu!mania工具箱" Height="500" Width="800">
   <Window.Resources>
     
   </Window.Resources>
   <Grid ShowGridLines="True">
     <Grid.ColumnDefinitions>
-      <ColumnDefinition Width="6*"/>
       <ColumnDefinition Width="4*"/>
+      <ColumnDefinition Width="5*"/>
     </Grid.ColumnDefinitions>
     <Grid ShowGridLines="True">
       <Grid.Resources>
@@ -32,10 +32,11 @@
         <RowDefinition Height="Auto"/>
         <RowDefinition Height="Auto"/>
         <RowDefinition Height="Auto"/>
+        <RowDefinition Height="Auto"/>
       </Grid.RowDefinitions>
       <Grid.ColumnDefinitions>
         <ColumnDefinition/>
-        <ColumnDefinition Width="6*"/>
+        <ColumnDefinition Width="5*"/>
       </Grid.ColumnDefinitions>
       <Label Content="通用设置"/>
       <WrapPanel Grid.Column="1" Orientation="Horizontal">
@@ -86,8 +87,26 @@
 
         <Button Content="重新评级" Command="{Binding Regrade.RegradeCommand}"/>
       </WrapPanel>
+
+      <Label Grid.Row="2" Content="XXY SR"/>
+      <WrapPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal">
+        <Label Content="排除4K"/>
+        <CheckBox IsChecked="{Binding Settings.StarRating.Exclude4K}"/>
+        <Label Content="最低SR"/>
+        <TextBox Text="{Binding Settings.StarRating.MinSR}" MinWidth="20"/>
+        <Label Content="显示错误"/>
+        <CheckBox IsChecked="{Binding Settings.StarRating.ShowBeatmapError}"/>
+        <Button Content="重新计算" Command="{Binding StarRating.StarRatingCommand}"/>
+        <Button Content="取消" Command="{Binding StarRating.CancelCommand}"/>
+      </WrapPanel>
     </Grid>
-    
-    <RichTextBox Name="logTextBox" Grid.Column="1" IsReadOnly="True"/>
+
+    <RichTextBox Name="logTextBox" Grid.Column="1" IsReadOnly="True" VerticalScrollBarVisibility="Auto">
+      <RichTextBox.Resources>
+        <Style TargetType="{x:Type Paragraph}">
+          <Setter Property="Margin" Value="0"/>
+        </Style>
+      </RichTextBox.Resources>
+    </RichTextBox>
   </Grid>
 </Window>
