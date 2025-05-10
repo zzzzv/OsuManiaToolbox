@@ -13,5 +13,8 @@ public partial class StarRatingSettings : ObservableObject
     private double _minSR = 3;
 
     [ObservableProperty]
+    private bool _forceUpdate = false;
+
+    [ObservableProperty]
     private bool _showBeatmapError = false;
 }

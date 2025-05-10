@@ -97,6 +97,12 @@
       </StackPanel>
       <Separator />
       <StackPanel Orientation="Horizontal">
+        <Label Content="强制重算"/>
+        <CheckBox IsChecked="{Binding Settings.StarRating.ForceUpdate}"/>
+        <Label Content="NM和EZ的SR相等，就认为已经是XXY SR了，跳过"/>
+      </StackPanel>
+      <Separator />
+      <StackPanel Orientation="Horizontal">
         <Label Content="显示错误"/>
         <CheckBox IsChecked="{Binding Settings.StarRating.ShowBeatmapError}"/>
         <Label Content="目前程序报错的谱面太多，错误信息刷屏"/>
@@ -107,10 +113,12 @@
       </UniformGrid>
       <Border BorderBrush="Black" BorderThickness="1"/>
       <TextBlock>
-    <Run Text="项目地址"/>
-    <Hyperlink NavigateUri="https://github.com/zzzzv/OsuManiaToolbox">
-        https://github.com/zzzzv/OsuManiaToolbox
-    </Hyperlink>
+        <Run Text="项目地址"/>
+        <Hyperlink NavigateUri="https://github.com/zzzzv/OsuManiaToolbox">
+          https://github.com/zzzzv/OsuManiaToolbox
+        </Hyperlink>
+        <LineBreak/>
+        <Run Text="这里一直是最新版，群文件不一定想得起来发"/>
       </TextBlock>
     </StackPanel>
     <GridSplitter Grid.Column="1" 

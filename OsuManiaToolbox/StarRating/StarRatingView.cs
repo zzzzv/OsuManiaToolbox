@@ -4,6 +4,7 @@ using OsuParsers.Enums;
 using StarRatingRebirth;
 using System.IO;
 using CommunityToolkit.Mvvm.ComponentModel;
+using System.Reflection.Metadata.Ecma335;
 
 namespace OsuManiaToolbox.StarRating;
 
@@ -77,6 +78,7 @@ public partial class StarRatingView : ObservableObject
         _logger.Info($"共有{beatmaps.Count}张谱面");
 
         int processedCount = 0;
+        int skipCount = 0;
         int errorCount = 0;
         var options = new ParallelOptions
         {
@@ -88,29 +90,38 @@ public partial class StarRatingView : ObservableObject
         {
             token.ThrowIfCancellationRequested();
 
-            try
+            if (!_settings.StarRating.ForceUpdate &&
+                bm.ManiaStarRating[Mods.None] != bm.ManiaStarRating[Mods.Easy])
             {
-                var data = ManiaData.FromFile(_settings.GetBeatmapPath(bm));
-                bm.ManiaStarRating[Mods.None] = SRCalculator.Calculate(data);
-                bm.ManiaStarRating[Mods.HalfTime] = SRCalculator.Calculate(data.HT());
-                bm.ManiaStarRating[Mods.DoubleTime] = SRCalculator.Calculate(data.DT());
-
-                int current = Interlocked.Increment(ref processedCount);
-                if (current % 500 == 0)
+                Interlocked.Increment(ref skipCount);
+            }
+            else
+            {
+                try
                 {
-                    _logger.Info($"处理进度: {current}/{beatmaps.Count}");
+                    var data = ManiaData.FromFile(_settings.GetBeatmapPath(bm));
+                    bm.ManiaStarRating[Mods.None] = SRCalculator.Calculate(data);
+                    bm.ManiaStarRating[Mods.HalfTime] = SRCalculator.Calculate(data.HT());
+                    bm.ManiaStarRating[Mods.DoubleTime] = SRCalculator.Calculate(data.DT());
+
+                    Interlocked.Increment(ref processedCount);
+                }
+                catch (Exception ex)
+                {
+                    Interlocked.Increment(ref errorCount);
+                    if (_settings.StarRating.ShowBeatmapError)
+                    {
+                        _logger.Error($"处理谱面 {bm.FolderName}/{bm.FileName} 时出错: {ex.Message}");
+                    }
                 }
             }
-            catch (Exception ex)
+            int current = processedCount + skipCount + errorCount;
+            if (current % 500 == 0)
             {
-                Interlocked.Increment(ref errorCount);
-                if (_settings.StarRating.ShowBeatmapError)
-                {
-                    _logger.Error($"处理谱面 {bm.FolderName}/{bm.FileName} 时出错: {ex.Message}");
-                }
+                _logger.Info($"处理进度: {current}/{beatmaps.Count}");
             }
         });
-        _logger.Info($"已处理{processedCount}张谱面，{errorCount}张谱面出错");
+        _logger.Info($"已处理{processedCount}张谱面，跳过{skipCount}张谱面, {errorCount}张谱面出错");
 
         if (_settings.BackupDb)
         {
