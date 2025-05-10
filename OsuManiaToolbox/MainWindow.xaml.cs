@@ -3,6 +3,7 @@ using System.Windows.Documents;
 using System.Windows.Media;
 using OsuManiaToolbox.Regrade;
 using OsuManiaToolbox.StarRating;
+using System.Reflection;
 
 namespace OsuManiaToolbox;
 
@@ -11,6 +12,8 @@ namespace OsuManiaToolbox;
 /// </summary>
 public partial class MainWindow : Window
 {
+    public string AppVersion => Assembly.GetExecutingAssembly().GetName().Version?.ToString() ?? "1.0.0";
+
     public Settings Settings { get; }
     public RegradeView Regrade { get; }
     public StarRatingView StarRating { get; }
@@ -23,6 +26,9 @@ public partial class MainWindow : Window
         StarRating = new StarRatingView(Settings, new Logger(AppendLog, "StarRating"));
 
         DataContext = this;
+
+        var version = Assembly.GetExecutingAssembly().GetName().Version ?? new Version(1, 0, 0);
+        Title = $"osu!mania工具箱 v{version.Major}.{version.Minor}.{version.Build}";
 
         Closed += (s, e) => Settings.Save();
     }

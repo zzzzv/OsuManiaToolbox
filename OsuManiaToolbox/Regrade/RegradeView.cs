@@ -2,7 +2,6 @@
 using OsuParsers.Enums.Database;
 using OsuParsers.Database.Objects;
 using System.IO;
-using System.Windows.Input;
 using CommunityToolkit.Mvvm.Input;
 
 namespace OsuManiaToolbox.Regrade;
@@ -12,7 +11,7 @@ public partial class RegradeView
     private readonly Settings _settings;
     private readonly Logger _logger;
 
-    public ICommand RegradeCommand { get; }
+    public IRelayCommand RegradeCommand { get; }
 
     public RegradeView(Settings settings, Logger logger)
     {
@@ -23,6 +22,12 @@ public partial class RegradeView
 
     private void RegradeRun()
     {
+        if (!Path.Exists(_settings.OsuDbPath))
+        {
+            _logger.Error($"找不到文件 {_settings.OsuDbPath}");
+            return;
+        }
+
         try
         {
             var scoreDb = DatabaseDecoder.DecodeScores(_settings.ScoreDbPath);
@@ -63,11 +68,7 @@ public partial class RegradeView
         }
         catch (Exception ex)
         {
-            _logger.Error(ex.Message);
-            if(ex.StackTrace != null)
-            {
-                _logger.Error(ex.StackTrace);
-            }
+            _logger.Exception(ex);
         }
     }
 

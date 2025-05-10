@@ -24,4 +24,12 @@ public class Logger(Action<LogMessage> logAction, string source = "Main")
     public void Info(string message) => Log(message, LogLevel.Info);
     public void Warning(string message) => Log(message, LogLevel.Warning);
     public void Error(string message) => Log(message, LogLevel.Error);
+    public void Exception(Exception ex)
+    {
+        Log($"{ex.GetType().Name}: {ex.Message}", LogLevel.Error);
+        if (ex.StackTrace != null)
+        {
+            Log(ex.StackTrace, LogLevel.Error);
+        }
+    }
 }

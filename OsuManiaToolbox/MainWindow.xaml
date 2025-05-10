@@ -7,17 +7,15 @@
         xmlns:regrade="clr-namespace:OsuManiaToolbox.Regrade"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance Type=local:MainWindow, IsDesignTimeCreatable=True}"
-        Title="osu!mania工具箱" Height="500" Width="800">
-  <Window.Resources>
-    
-  </Window.Resources>
-  <Grid ShowGridLines="True">
+        Height="500" Width="800">
+  <Grid>
     <Grid.ColumnDefinitions>
       <ColumnDefinition Width="4*"/>
+      <ColumnDefinition Width="Auto"/>
       <ColumnDefinition Width="5*"/>
     </Grid.ColumnDefinitions>
-    <Grid ShowGridLines="True">
-      <Grid.Resources>
+    <StackPanel Orientation="Vertical">
+      <StackPanel.Resources>
         <Style TargetType="TextBox">
           <Setter Property="VerticalContentAlignment" Value="Center"/>
         </Style>
@@ -27,81 +25,100 @@
         <Style TargetType="Button">
           <Setter Property="VerticalContentAlignment" Value="Center"/>
         </Style>
-      </Grid.Resources>
-      <Grid.RowDefinitions>
-        <RowDefinition Height="Auto"/>
-        <RowDefinition Height="Auto"/>
-        <RowDefinition Height="Auto"/>
-        <RowDefinition Height="Auto"/>
-      </Grid.RowDefinitions>
-      <Grid.ColumnDefinitions>
-        <ColumnDefinition/>
-        <ColumnDefinition Width="5*"/>
-      </Grid.ColumnDefinitions>
-      <Label Content="通用设置"/>
-      <WrapPanel Grid.Column="1" Orientation="Horizontal">
-        <StackPanel Orientation="Horizontal">
-          <Label Content="osu路径"/>
-          <TextBox Text="{Binding Settings.OsuPath}" MinWidth="200"/>
-        </StackPanel>
-        <StackPanel Orientation="Horizontal">
-          <Label Content="写入DB时备份"/>
-          <CheckBox IsChecked="{Binding Settings.BackupDb}"/>
-        </StackPanel>
-      </WrapPanel>
-      
-      <Label Grid.Row="1" Content="成绩评级"/>
-      <WrapPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal">
-        <ItemsControl ItemsSource="{Binding Settings.Regrade.GradeThresholds}">
-          <ItemsControl.ItemsPanel>
-            <ItemsPanelTemplate>
-              <StackPanel Orientation="Horizontal" />
-            </ItemsPanelTemplate>
-          </ItemsControl.ItemsPanel>
-          <ItemsControl.ItemTemplate>
-            <DataTemplate>
-              <StackPanel Orientation="Horizontal">
-                <Label Content="{Binding Grade}"/>
-                <TextBox Text="{Binding Acc}" MinWidth="20" />
-              </StackPanel>
-            </DataTemplate>
-          </ItemsControl.ItemTemplate>
-        </ItemsControl>
-
-        <ItemsControl ItemsSource="{Binding Settings.Regrade.ModGradeStrategyIndexes}">
-          <ItemsControl.ItemsPanel>
-            <ItemsPanelTemplate>
-              <StackPanel Orientation="Horizontal" />
-            </ItemsPanelTemplate>
-          </ItemsControl.ItemsPanel>
-          <ItemsControl.ItemTemplate>
-            <DataTemplate>
-              <StackPanel Orientation="Horizontal">
-                <Label Content="{Binding ModAcronym}"/>
-                <ComboBox ItemsSource="{x:Static regrade:GradeStrategy.All}" DisplayMemberPath="Name"
-                          SelectedIndex="{Binding Index}"/>
-              </StackPanel>
-            </DataTemplate>
-          </ItemsControl.ItemTemplate>
-        </ItemsControl>
-
-        <Button Content="重新评级" Command="{Binding Regrade.RegradeCommand}"/>
-      </WrapPanel>
-
-      <Label Grid.Row="2" Content="XXY SR"/>
-      <WrapPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal">
+      </StackPanel.Resources>
+      <DockPanel>
+        <Label Content="osu路径"/>
+        <TextBox Text="{Binding Settings.OsuPath}"/>
+      </DockPanel>
+      <Separator />
+      <DockPanel>
+        <Label Content="写入DB时备份"/>
+        <CheckBox IsChecked="{Binding Settings.BackupDb}"/>
+      </DockPanel>
+      <Border BorderBrush="Black" BorderThickness="1"/>
+      <TextBlock>
+        <Run Text="自定义成绩评级规则，方便按成绩找谱（默认的放眼看去全是" Foreground="Black"/>
+        <Run Text="S" Foreground="Goldenrod" FontWeight="Bold"/>
+        <Run Text="）" Foreground="Black"/>
+      </TextBlock>
+      <Separator />
+      <ItemsControl ItemsSource="{Binding Settings.Regrade.GradeThresholds}">
+        <ItemsControl.ItemsPanel>
+          <ItemsPanelTemplate>
+            <UniformGrid Rows="1"/>
+          </ItemsPanelTemplate>
+        </ItemsControl.ItemsPanel>
+        <ItemsControl.ItemTemplate>
+          <DataTemplate>
+            <DockPanel>
+              <Label Content="{Binding Grade}"/>
+              <TextBox Text="{Binding Acc}" MinWidth="30" />
+            </DockPanel>
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+      <Separator />
+      <TextBlock>
+        <Run Text="只有以下模式的成绩，打不动原速的谱给个" Foreground="Black"/>
+        <Run Text="D" Foreground="DeepPink" FontWeight="Bold"/>
+        <Run Text="一目了然" Foreground="Black"/>
+      </TextBlock>
+      <ItemsControl ItemsSource="{Binding Settings.Regrade.ModGradeStrategyIndexes}">
+        <ItemsControl.ItemsPanel>
+          <ItemsPanelTemplate>
+            <UniformGrid Rows="1" />
+          </ItemsPanelTemplate>
+        </ItemsControl.ItemsPanel>
+        <ItemsControl.ItemTemplate>
+          <DataTemplate>
+            <DockPanel>
+              <Label Content="{Binding ModAcronym}"/>
+              <ComboBox ItemsSource="{x:Static regrade:GradeStrategy.All}" DisplayMemberPath="Name"
+                  SelectedIndex="{Binding Index}"/>
+            </DockPanel>
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+      <Button Content="重新评级" Command="{Binding Regrade.RegradeCommand}"/>
+      <Border BorderBrush="Black" BorderThickness="1"/>
+      <TextBlock Text="替换SR为sunnyxxy SR，包括HT/DT，方便按难度排序选谱。但不包括EZ/HR，可以选个EZ看原始SR。"
+                 TextWrapping="Wrap"/>
+      <Separator />
+      <StackPanel Orientation="Horizontal">
         <Label Content="排除4K"/>
         <CheckBox IsChecked="{Binding Settings.StarRating.Exclude4K}"/>
+        <Label Content="不玩4K但有很多4K谱面勾选提速"/>
+      </StackPanel>
+      <Separator />
+      <StackPanel Orientation="Horizontal">
         <Label Content="最低SR"/>
         <TextBox Text="{Binding Settings.StarRating.MinSR}" MinWidth="20"/>
+        <Label Content="太低的不打，排除掉"/>
+      </StackPanel>
+      <Separator />
+      <StackPanel Orientation="Horizontal">
         <Label Content="显示错误"/>
         <CheckBox IsChecked="{Binding Settings.StarRating.ShowBeatmapError}"/>
-        <Button Content="重新计算" Command="{Binding StarRating.StarRatingCommand}"/>
+        <Label Content="目前程序报错的谱面太多，错误信息刷屏"/>
+      </StackPanel>
+      <UniformGrid Rows="1">
+        <Button Content="重新计算(几分钟)" Command="{Binding StarRating.RunCommand}"/>
         <Button Content="取消" Command="{Binding StarRating.CancelCommand}"/>
-      </WrapPanel>
-    </Grid>
-
-    <RichTextBox Name="logTextBox" Grid.Column="1" IsReadOnly="True" VerticalScrollBarVisibility="Auto">
+      </UniformGrid>
+      <Border BorderBrush="Black" BorderThickness="1"/>
+      <TextBlock>
+    <Run Text="项目地址"/>
+    <Hyperlink NavigateUri="https://github.com/zzzzv/OsuManiaToolbox">
+        https://github.com/zzzzv/OsuManiaToolbox
+    </Hyperlink>
+      </TextBlock>
+    </StackPanel>
+    <GridSplitter Grid.Column="1" 
+                  Width="3" 
+                  VerticalAlignment="Stretch" 
+                  HorizontalAlignment="Center" 
+                  Background="Gray"/>
+    <RichTextBox Name="logTextBox" Grid.Column="2" IsReadOnly="True" VerticalScrollBarVisibility="Auto">
       <RichTextBox.Resources>
         <Style TargetType="{x:Type Paragraph}">
           <Setter Property="Margin" Value="0"/>
