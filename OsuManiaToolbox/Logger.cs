@@ -8,7 +8,10 @@ public enum LogLevel
     Error,
 }
 
-public record LogMessage(string Source, string Message, LogLevel Level);
+public record LogMessage(string Source, string Message, LogLevel Level)
+{
+    public override string ToString() => $"[{DateTime.Now:HH:mm:ss}][{Source}]{Message}";
+}
 
 public class Logger(Action<LogMessage> logAction, string source = "Main")
 {

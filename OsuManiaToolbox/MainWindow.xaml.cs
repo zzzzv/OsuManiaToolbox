@@ -30,6 +30,8 @@ public partial class MainWindow : Window
         var version = Assembly.GetExecutingAssembly().GetName().Version ?? new Version(1, 0, 0);
         Title = $"osu!mania工具箱 v{version.Major}.{version.Minor}.{version.Build}";
 
+        logTextBox.Document.Blocks.Clear();
+
         Closed += (s, e) => Settings.Save();
     }
 
@@ -38,7 +40,7 @@ public partial class MainWindow : Window
         Dispatcher.Invoke(() =>
         {
             var paragraph = new Paragraph();
-            var run = new Run($"[{DateTime.Now:HH:mm:ss}][{log.Source}]{log.Message}");
+            var run = new Run(log.ToString());
 
             switch (log.Level)
             {
