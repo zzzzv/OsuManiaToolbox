@@ -15,31 +15,20 @@
       <ColumnDefinition Width="5*"/>
     </Grid.ColumnDefinitions>
     <StackPanel Orientation="Vertical">
-      <StackPanel.Resources>
-        <Style TargetType="TextBox">
-          <Setter Property="VerticalContentAlignment" Value="Center"/>
-        </Style>
-        <Style TargetType="CheckBox">
-          <Setter Property="VerticalContentAlignment" Value="Center"/>
-        </Style>
-        <Style TargetType="Button">
-          <Setter Property="VerticalContentAlignment" Value="Center"/>
-        </Style>
-      </StackPanel.Resources>
       <DockPanel>
-        <Label Content="osu路径"/>
+        <TextBlock Text="osu路径"/>
         <TextBox Text="{Binding Settings.OsuPath}"/>
       </DockPanel>
       <Separator />
       <DockPanel>
-        <Label Content="写入DB时备份"/>
+        <TextBlock Text="写入DB时备份"/>
         <CheckBox IsChecked="{Binding Settings.BackupDb}"/>
       </DockPanel>
-      <Border BorderBrush="Black" BorderThickness="1"/>
+      <Border />
       <TextBlock>
-        <Run Text="自定义成绩评级规则，方便按成绩找谱（默认的放眼看去全是" Foreground="Black"/>
+        <Run Text="自定义成绩评级规则，方便按成绩找谱(默认的放眼看去全是"/>
         <Run Text="S" Foreground="Goldenrod" FontWeight="Bold"/>
-        <Run Text="）" Foreground="Black"/>
+        <Run Text=")"/>
       </TextBlock>
       <Separator />
       <ItemsControl ItemsSource="{Binding Settings.Regrade.GradeThresholds}">
@@ -51,7 +40,7 @@
         <ItemsControl.ItemTemplate>
           <DataTemplate>
             <DockPanel>
-              <Label Content="{Binding Grade}"/>
+              <TextBlock Text="{Binding Grade}"/>
               <TextBox Text="{Binding Acc}" MinWidth="30" />
             </DockPanel>
           </DataTemplate>
@@ -59,9 +48,9 @@
       </ItemsControl>
       <Separator />
       <TextBlock>
-        <Run Text="只有以下模式的成绩，打不动原速的谱给个" Foreground="Black"/>
+        <Run Text="只有以下模式的成绩，打不动原速的谱给个"/>
         <Run Text="D" Foreground="DeepPink" FontWeight="Bold"/>
-        <Run Text="一目了然" Foreground="Black"/>
+        <Run Text="一目了然"/>
       </TextBlock>
       <ItemsControl ItemsSource="{Binding Settings.Regrade.ModGradeStrategyIndexes}">
         <ItemsControl.ItemsPanel>
@@ -72,7 +61,7 @@
         <ItemsControl.ItemTemplate>
           <DataTemplate>
             <DockPanel>
-              <Label Content="{Binding ModAcronym}"/>
+              <TextBlock Text="{Binding ModAcronym}"/>
               <ComboBox ItemsSource="{x:Static regrade:GradeStrategy.All}" DisplayMemberPath="Name"
                   SelectedIndex="{Binding Index}"/>
             </DockPanel>
@@ -80,38 +69,38 @@
         </ItemsControl.ItemTemplate>
       </ItemsControl>
       <Button Content="重新评级" Command="{Binding Regrade.RegradeCommand}"/>
-      <Border BorderBrush="Black" BorderThickness="1"/>
+      <Border />
       <TextBlock Text="替换SR为sunnyxxy SR，包括HT/DT，方便按难度排序选谱。但不包括EZ/HR，可以选个EZ看原始SR。"
                  TextWrapping="Wrap"/>
       <Separator />
       <StackPanel Orientation="Horizontal">
-        <Label Content="排除4K"/>
+        <TextBlock Text="排除4K"/>
         <CheckBox IsChecked="{Binding Settings.StarRating.Exclude4K}"/>
-        <Label Content="不玩4K但有很多4K谱面勾选提速"/>
+        <TextBlock Text="不玩4K但有很多4K谱面勾选提速"/>
       </StackPanel>
       <Separator />
       <StackPanel Orientation="Horizontal">
-        <Label Content="最低SR"/>
+        <TextBlock Text="最低SR"/>
         <TextBox Text="{Binding Settings.StarRating.MinSR}" MinWidth="20"/>
-        <Label Content="太低的不打，排除掉"/>
+        <TextBlock Text="太低的不打，排除掉"/>
       </StackPanel>
       <Separator />
       <StackPanel Orientation="Horizontal">
-        <Label Content="强制重算"/>
+        <TextBlock Text="强制重算"/>
         <CheckBox IsChecked="{Binding Settings.StarRating.ForceUpdate}"/>
-        <Label Content="NM和EZ的SR相等，就认为已经是XXY SR了，跳过"/>
+        <TextBlock Text="默认已经更新为XXY SR的直接跳过"/>
       </StackPanel>
       <Separator />
       <StackPanel Orientation="Horizontal">
-        <Label Content="显示错误"/>
+        <TextBlock Text="显示错误"/>
         <CheckBox IsChecked="{Binding Settings.StarRating.ShowBeatmapError}"/>
-        <Label Content="目前程序报错的谱面太多，错误信息刷屏"/>
+        <TextBlock Text="目前程序报错的谱面太多，错误信息刷屏"/>
       </StackPanel>
       <UniformGrid Rows="1">
         <Button Content="重新计算(几分钟)" Command="{Binding StarRating.RunCommand}"/>
         <Button Content="取消" Command="{Binding StarRating.CancelCommand}"/>
       </UniformGrid>
-      <Border BorderBrush="Black" BorderThickness="1"/>
+      <Border />
       <TextBlock>
         <Run Text="项目地址"/>
         <Hyperlink NavigateUri="https://github.com/zzzzv/OsuManiaToolbox">
