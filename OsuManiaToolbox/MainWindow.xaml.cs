@@ -1,29 +1,34 @@
-﻿using System.Windows;
+﻿using Microsoft.Extensions.DependencyInjection;
+using OsuManiaToolbox.Services;
+using OsuManiaToolbox.Settings;
+using OsuManiaToolbox.StarRating;
+using OsuManiaToolbox.ViewModels;
+using System.Reflection;
+using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Media;
-using OsuManiaToolbox.Regrade;
-using OsuManiaToolbox.StarRating;
-using System.Reflection;
+using System.Windows.Threading;
 
 namespace OsuManiaToolbox;
 
-/// <summary>
-/// Interaction logic for MainWindow.xaml
-/// </summary>
 public partial class MainWindow : Window
 {
-    public string AppVersion => Assembly.GetExecutingAssembly().GetName().Version?.ToString() ?? "1.0.0";
+    private readonly ILogDispatcher _logDispatcher;
+    private readonly SettingsService _settingsService;
 
-    public Settings Settings { get; }
+    public CommonSettings Settings => _settingsService.Common;
     public RegradeView Regrade { get; }
     public StarRatingView StarRating { get; }
 
     public MainWindow()
     {
         InitializeComponent();
-        Settings = Settings.Load();
-        Regrade = new RegradeView(Settings, new Logger(AppendLog, "Regrade"));
-        StarRating = new StarRatingView(Settings, new Logger(AppendLog, "StarRating"));
+
+        var services = App.Current.Services;
+        _logDispatcher = services.GetRequiredService<ILogDispatcher>();
+        _settingsService = services.GetRequiredService<SettingsService>();
+        Regrade = services.GetRequiredService<RegradeView>();
+        StarRating = services.GetRequiredService<StarRatingView>();
 
         DataContext = this;
 
@@ -32,35 +37,53 @@ public partial class MainWindow : Window
 
         logTextBox.Document.Blocks.Clear();
 
-        Closed += (s, e) => Settings.Save();
+        _logDispatcher.LogsReceived += AppendLog;
+
+        Closed += MainWindow_Closed;
     }
 
-    private void AppendLog(LogMessage log)
+    private void MainWindow_Closed(object? sender, EventArgs e)
     {
-        Dispatcher.Invoke(() =>
+        _settingsService.Save();
+        _logDispatcher.LogsReceived -= AppendLog;
+    }
+
+    private void AppendLog(IEnumerable<LogMessage> logs)
+    {
+        var filteredLogs = logs.Where(p => p.Level >= Settings.LogLevel).ToList();
+        if (filteredLogs.Count == 0) return;
+
+        Dispatcher.BeginInvoke(() =>
         {
-            var paragraph = new Paragraph();
-            var run = new Run(log.ToString());
+            logTextBox.BeginChange();
 
-            switch (log.Level)
+            foreach (var log in filteredLogs)
             {
-                case LogLevel.Debug:
-                    run.Foreground = Brushes.Gray;
-                    break;
-                case LogLevel.Info:
-                    run.Foreground = Brushes.Black;
-                    break;
-                case LogLevel.Warning:
-                    run.Foreground = Brushes.Orange;
-                    break;
-                case LogLevel.Error:
-                    run.Foreground = Brushes.Red;
-                    break;
-            }
-            paragraph.Inlines.Add(run);
+                var paragraph = new Paragraph();
+                var run = new Run(log.ToString());
 
-            logTextBox.Document.Blocks.Add(paragraph);
+                switch (log.Level)
+                {
+                    case LogLevel.Debug:
+                        run.Foreground = Brushes.Gray;
+                        break;
+                    case LogLevel.Info:
+                        run.Foreground = Brushes.Black;
+                        break;
+                    case LogLevel.Warning:
+                        run.Foreground = Brushes.Orange;
+                        break;
+                    case LogLevel.Error:
+                        run.Foreground = Brushes.Red;
+                        break;
+                }
+                paragraph.Inlines.Add(run);
+
+                logTextBox.Document.Blocks.Add(paragraph);
+            }
+
+            logTextBox.EndChange();
             logTextBox.ScrollToEnd();
-        });
+        }, DispatcherPriority.Background);
     }
 }

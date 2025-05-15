@@ -33,9 +33,4 @@ public static class Extensions
             .Where(x => x != Mods.None && mods.HasFlag(x))
             .Select(x => x.Acronym()));
     }
-
-    public static IEnumerable<DbBeatmap> ManiaBeatmaps(this OsuDatabase osuDb)
-    {
-        return osuDb.Beatmaps.Where(x => x.Ruleset == Ruleset.Mania);
-    }
 }

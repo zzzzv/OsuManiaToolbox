@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:OsuManiaToolbox"
-        xmlns:regrade="clr-namespace:OsuManiaToolbox.Regrade"
+        xmlns:settings="clr-namespace:OsuManiaToolbox.Settings"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance Type=local:MainWindow, IsDesignTimeCreatable=True}"
         Height="500" Width="800">
@@ -23,6 +23,15 @@
       <DockPanel>
         <TextBlock Text="写入DB时备份"/>
         <CheckBox IsChecked="{Binding Settings.BackupDb}"/>
+        <TextBlock Text="日志等级"/>
+        <ComboBox ItemsSource="{x:Static settings:CommonSettings.LogLevels}" 
+                  SelectedItem="{Binding Settings.LogLevel}">
+          <ComboBox.ItemTemplate>
+            <DataTemplate>
+              <TextBlock Text="{Binding Converter={StaticResource EnumToStringConverter}}"/>
+            </DataTemplate>
+          </ComboBox.ItemTemplate>
+        </ComboBox>
       </DockPanel>
       <Border />
       <TextBlock>
@@ -31,7 +40,7 @@
         <Run Text=")"/>
       </TextBlock>
       <Separator />
-      <ItemsControl ItemsSource="{Binding Settings.Regrade.GradeThresholds}">
+      <ItemsControl ItemsSource="{Binding Regrade.Settings.GradeThresholds}">
         <ItemsControl.ItemsPanel>
           <ItemsPanelTemplate>
             <UniformGrid Rows="1"/>
@@ -52,7 +61,7 @@
         <Run Text="D" Foreground="DeepPink" FontWeight="Bold"/>
         <Run Text="一目了然"/>
       </TextBlock>
-      <ItemsControl ItemsSource="{Binding Settings.Regrade.ModGradeStrategyIndexes}">
+      <ItemsControl ItemsSource="{Binding Regrade.Settings.ModGradeStrategyIndexes}">
         <ItemsControl.ItemsPanel>
           <ItemsPanelTemplate>
             <UniformGrid Rows="1" />
@@ -62,7 +71,7 @@
           <DataTemplate>
             <DockPanel>
               <TextBlock Text="{Binding ModAcronym}"/>
-              <ComboBox ItemsSource="{x:Static regrade:GradeStrategy.All}" DisplayMemberPath="Name"
+              <ComboBox ItemsSource="{x:Static settings:RegradeSettings.AvailableStrategies}" DisplayMemberPath="Name"
                   SelectedIndex="{Binding Index}"/>
             </DockPanel>
           </DataTemplate>
@@ -75,26 +84,20 @@
       <Separator />
       <StackPanel Orientation="Horizontal">
         <TextBlock Text="排除4K"/>
-        <CheckBox IsChecked="{Binding Settings.StarRating.Exclude4K}"/>
+        <CheckBox IsChecked="{Binding StarRating.Settings.Exclude4K}"/>
         <TextBlock Text="不玩4K但有很多4K谱面勾选提速"/>
       </StackPanel>
       <Separator />
       <StackPanel Orientation="Horizontal">
         <TextBlock Text="最低SR"/>
-        <TextBox Text="{Binding Settings.StarRating.MinSR}" MinWidth="20"/>
+        <TextBox Text="{Binding StarRating.Settings.MinSR}" MinWidth="20"/>
         <TextBlock Text="太低的不打，排除掉"/>
       </StackPanel>
       <Separator />
       <StackPanel Orientation="Horizontal">
         <TextBlock Text="强制重算"/>
-        <CheckBox IsChecked="{Binding Settings.StarRating.ForceUpdate}"/>
+        <CheckBox IsChecked="{Binding StarRating.Settings.ForceUpdate}"/>
         <TextBlock Text="默认已经更新为XXY SR的直接跳过"/>
-      </StackPanel>
-      <Separator />
-      <StackPanel Orientation="Horizontal">
-        <TextBlock Text="显示错误"/>
-        <CheckBox IsChecked="{Binding Settings.StarRating.ShowBeatmapError}"/>
-        <TextBlock Text="目前程序报错的谱面太多，错误信息刷屏"/>
       </StackPanel>
       <UniformGrid Rows="1">
         <Button Content="重新计算(几分钟)" Command="{Binding StarRating.RunCommand}"/>

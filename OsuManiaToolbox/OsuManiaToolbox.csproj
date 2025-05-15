@@ -6,7 +6,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
-    <Version>0.1.1</Version>
+    <Version>0.1.2</Version>
     <PublishSingleFile>true</PublishSingleFile>
     <PublishDir>bin\publish</PublishDir>
     <SelfContained>false</SelfContained>
@@ -17,7 +17,8 @@
 
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
-    <PackageReference Include="StarRatingRebirth" Version="0.1.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.4" />
+    <PackageReference Include="StarRatingRebirth" Version="0.1.1" />
     <PackageReference Include="zzzzv.OsuParsers" Version="1.7.2" />
   </ItemGroup>
 

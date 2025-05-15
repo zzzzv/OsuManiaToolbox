@@ -1,6 +1,4 @@
-﻿
-
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace OsuManiaToolbox.StarRating;
 
@@ -14,7 +12,4 @@ public partial class StarRatingSettings : ObservableObject
 
     [ObservableProperty]
     private bool _forceUpdate = false;
-
-    [ObservableProperty]
-    private bool _showBeatmapError = false;
 }

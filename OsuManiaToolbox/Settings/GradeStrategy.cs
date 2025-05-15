@@ -1,7 +1,7 @@
 ﻿using OsuParsers.Database.Objects;
 using OsuParsers.Enums.Database;
 
-namespace OsuManiaToolbox.Regrade;
+namespace OsuManiaToolbox.Settings;
 
 public class GradeStrategy
 {
@@ -19,13 +19,6 @@ public class GradeStrategy
         }
         return Grade.F;
     }
-
-    public static readonly IReadOnlyList<GradeStrategy> All = [
-        new GradeStrategy(),
-        new FixedGradeStrategy(Grade.D),
-        new FixedGradeStrategy(Grade.F),
-        new IgnoreGradeStrategy(),
-    ];
 }
 
 public class FixedGradeStrategy(Grade? grade) : GradeStrategy

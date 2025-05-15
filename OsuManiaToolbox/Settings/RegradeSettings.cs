@@ -2,8 +2,9 @@
 using OsuParsers.Enums;
 using OsuParsers.Enums.Database;
 using System.Collections.ObjectModel;
+using System.Text.Json.Serialization;
 
-namespace OsuManiaToolbox.Regrade;
+namespace OsuManiaToolbox.Settings;
 
 public partial class GradeThreshold(Grade grade, double acc) : ObservableObject
 {
@@ -38,6 +39,14 @@ public partial class RegradeSettings : ObservableObject
         new ModGradeStrategyIndex(Mods.HalfTime),
     ];
 
+    [JsonIgnore]
+    public readonly static IReadOnlyList<GradeStrategy> AvailableStrategies = [
+        new GradeStrategy(),
+        new FixedGradeStrategy(Grade.D),
+        new FixedGradeStrategy(Grade.F),
+        new IgnoreGradeStrategy(),
+    ];
+
     public GradeStrategy GetGradeStrategy(Mods mods)
     {
         var maxIndex = ModGradeStrategyIndexes
@@ -45,6 +54,6 @@ public partial class RegradeSettings : ObservableObject
             .Select(x => x.Index)
             .DefaultIfEmpty(0)
             .Max();
-        return GradeStrategy.All[maxIndex];
+        return AvailableStrategies[maxIndex];
     }
 }

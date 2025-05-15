@@ -1,5 +1,4 @@
-﻿using OsuParsers.Database.Objects;
-using System.IO;
+﻿using System.IO;
 
 namespace OsuManiaToolbox;
 
