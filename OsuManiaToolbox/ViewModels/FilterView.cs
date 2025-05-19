@@ -1,12 +1,16 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CsvHelper;
+using System.Text;
 using DynamicExpresso;
 using OsuManiaToolbox.Core.Services;
 using OsuManiaToolbox.Settings;
 using OsuParsers.Database.Objects;
 using OsuParsers.Enums;
-using System.Text.RegularExpressions;
 using OsuParsers.Enums.Database;
+using System.Globalization;
+using System.IO;
+using System.Text.RegularExpressions;
 
 namespace OsuManiaToolbox.ViewModels;
 
@@ -20,6 +24,7 @@ public partial class FilterView : ObservableObject
     public IRelayCommand CreateItem { get; }
     public IRelayCommand DeleteItem { get; }
     public IRelayCommand CreateCollection { get; }
+    public IRelayCommand WriteCsv { get; }
 
     public FilterSettings Settings { get; }
 
@@ -38,6 +43,7 @@ public partial class FilterView : ObservableObject
         CreateItem = new RelayCommand(CreateItemRun);
         DeleteItem = new RelayCommand(DeleteItemRun, CanDeleteItem);
         CreateCollection = new RelayCommand(CreateCollectionRun);
+        WriteCsv = new RelayCommand(WriteCsvRun);
     }
 
     private void CreateItemRun()
@@ -109,6 +115,38 @@ public partial class FilterView : ObservableObject
         }
     }
 
+    private void WriteCsvRun()
+    {
+        try
+        {
+            if (string.IsNullOrEmpty(Selected.CsvName))
+            {
+                _logger.Error("文件名不能为空");
+                return;
+            }
+            var result = Filter().ToArray();
+            if (result.Length == 0)
+            {
+                _logger.Info("没有符合条件的谱面");
+                return;
+            }
+            var file = Selected.CsvName + ".csv";
+            using (var stream = File.OpenWrite(file))
+            using (var writer = new StreamWriter(stream, Encoding.UTF8))
+            using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
+            {
+                csv.WriteHeader<CsvData>();
+                csv.NextRecord();
+                csv.WriteRecords(result.Select(x => new CsvData(x, _scoreDb)));
+            }
+            _logger.Info($"已导出 {result.Length} 张谱面到 {file}");
+        }
+        catch (Exception ex)
+        {
+            _logger.Exception(ex);
+        }
+    }
+
     private DbBeatmap[] Filter()
     {
         var beatmaps = _beatmapDb.Where(x => x.Ruleset == Ruleset.Mania).ToArray();
@@ -126,13 +164,16 @@ public partial class FilterView : ObservableObject
 
     private string Check(string expression)
     {
-        var replaced = Regex.Replace(expression, @"(?<![=<>])=(?![=<>])", "==");
+        var replaced = SingleEqualsRegex().Replace(expression, "==");
         if (replaced != expression)
         {
             _logger.Warning($"表达式 {expression} 应使用 == 而不是 =");
         }
         return replaced;
     }
+
+    [GeneratedRegex(@"(?<![=<>])=(?![=<>])")]
+    private static partial Regex SingleEqualsRegex();
 }
 
 public class FilterInterpreter
@@ -181,3 +222,30 @@ public class FilterInterpreter
     }
 }
 
+public class CsvData
+{
+    private readonly DbBeatmap _bm;
+    private readonly List<Score> _scores;
+    private readonly Score? _maxAccScore;
+    private readonly Score? _lastScore;
+
+    public CsvData(DbBeatmap bm, IScoreDbService scoreDb)
+    {
+        _bm = bm;
+        _scores = scoreDb.TryGetValue(_bm.MD5Hash, out var scores) ? scores : [];
+        _maxAccScore = _scores.OrderByDescending(x => x.ManiaAcc()).FirstOrDefault();
+        _lastScore = _scores.OrderByDescending(x => x.ScoreTimestamp).FirstOrDefault();
+    }
+
+    public string Title => _bm.TitleUnicode;
+    public string Difficulty => _bm.Difficulty;
+    public string SR => _bm.ManiaStarRating[Mods.None].ToString("F4");
+    public int Key => (int)_bm.CircleSize;
+    public int ScoreCount => _scores.Count;
+    public string MaxAcc => _maxAccScore?.ManiaAcc().ToString("F2") ?? string.Empty;
+    public string MaxAccMod => _maxAccScore?.Mods.Acronyms() ?? string.Empty;
+    public string MaxAccTime => _maxAccScore?.ScoreTimestamp.ToString("g") ?? string.Empty;
+    public string LastAcc => _lastScore?.ManiaAcc().ToString("F2") ?? string.Empty;
+    public string LastAccMod => _lastScore?.Mods.Acronyms() ?? string.Empty;
+    public string LastAccTime => _lastScore?.ScoreTimestamp.ToString("g") ?? string.Empty;
+}

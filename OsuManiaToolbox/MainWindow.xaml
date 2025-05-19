@@ -92,12 +92,15 @@
         <Button Content="取消" Command="{Binding StarRating.CancelCommand}"/>
       </UniformGrid>
       <Border />
-      <TextBlock Text="谱面筛选，过滤器无视大小写" TextWrapping="Wrap"/>
-      <TextBlock Text="Key"/>
-      <TextBlock Text="Status: 可用值R L Q P"/>
-      <TextBlock Text="Acc: 0-100"/>
-      <TextBlock Text="Score: 0-1000000"/>
-      <TextBlock Text="SR(mod): mod可用值HT DT EZ HR"/>
+      <Expander Header="谱面筛选，过滤器无视大小写" IsExpanded="False" ExpandDirection="Down">
+        <StackPanel>
+          <TextBlock Text="Key"/>
+          <TextBlock Text="Status: 可用值R L Q P"/>
+          <TextBlock Text="Acc: 0-100"/>
+          <TextBlock Text="Score: 0-1000000"/>
+          <TextBlock Text="SR(mod): mod可用值HT DT EZ HR"/>
+        </StackPanel>
+      </Expander>
       <Separator/>
       <DockPanel>
         <TextBlock Text="过滤条件" VerticalAlignment="Center"/>
@@ -114,8 +117,15 @@
       <Separator/>
       <DockPanel>
         <TextBlock Text="收藏夹名称"/>
+        <Button Content="生成收藏夹" DockPanel.Dock="Right" Command="{Binding Filter.CreateCollection}"/>
         <TextBox Text="{Binding Filter.Selected.CollectionName}" MinWidth="200"/>
-        <Button Content="生成收藏夹" Command="{Binding Filter.CreateCollection}"/>
+      </DockPanel>
+      <Separator/>
+      <DockPanel>
+        <TextBlock Text="输出到CSV"/>
+        <Button Content="写入文件" DockPanel.Dock="Right" Command="{Binding Filter.WriteCsv}"/>
+        <TextBlock Text=".csv" DockPanel.Dock="Right"/>
+        <TextBox Text="{Binding Filter.Selected.CsvName}" MinWidth="200"/>
       </DockPanel>
       <Border />
       <TextBlock>
