@@ -11,6 +11,7 @@ using OsuParsers.Enums.Database;
 using System.Globalization;
 using System.IO;
 using System.Text.RegularExpressions;
+using System.Diagnostics;
 
 namespace OsuManiaToolbox.ViewModels;
 
@@ -140,6 +141,12 @@ public partial class FilterView : ObservableObject
                 csv.WriteRecords(result.Select(x => new CsvData(x, _scoreDb)));
             }
             _logger.Info($"已导出 {result.Length} 张谱面到 {file}");
+
+            var absolutePath = Path.GetFullPath(file);
+            var process = new Process();
+            process.StartInfo.FileName = absolutePath;
+            process.StartInfo.UseShellExecute = true;
+            process.Start();
         }
         catch (Exception ex)
         {
@@ -238,9 +245,14 @@ public class CsvData
     }
 
     public string Title => _bm.TitleUnicode;
+    public string Artist => _bm.ArtistUnicode;
     public string Difficulty => _bm.Difficulty;
-    public string SR => _bm.ManiaStarRating[Mods.None].ToString("F4");
+    public string XXY_SR => _bm.ManiaStarRating[Mods.None].ToString("F4");
+    public string SR => _bm.ManiaStarRating[Mods.HardRock].ToString("F4");
     public int Key => (int)_bm.CircleSize;
+    public string OD => _bm.OverallDifficulty.ToString("F1");
+    public string HP => _bm.HPDrain.ToString("F1");
+    public string LNRate => ((double)_bm.SlidersCount * 100 / (_bm.SlidersCount + _bm.CirclesCount)).ToString("F1");
     public int ScoreCount => _scores.Count;
     public string MaxAcc => _maxAccScore?.ManiaAcc().ToString("F2") ?? string.Empty;
     public string MaxAccMod => _maxAccScore?.Mods.Acronyms() ?? string.Empty;
@@ -248,4 +260,5 @@ public class CsvData
     public string LastAcc => _lastScore?.ManiaAcc().ToString("F2") ?? string.Empty;
     public string LastAccMod => _lastScore?.Mods.Acronyms() ?? string.Empty;
     public string LastAccTime => _lastScore?.ScoreTimestamp.ToString("g") ?? string.Empty;
+    public string Link => $"https://osu.ppy.sh/beatmapsets/{_bm.BeatmapSetId}#mania/{_bm.BeatmapId}";
 }
