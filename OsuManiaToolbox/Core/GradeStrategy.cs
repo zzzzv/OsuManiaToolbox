@@ -1,7 +1,8 @@
-﻿using OsuParsers.Database.Objects;
+﻿using OsuManiaToolbox.Settings;
+using OsuParsers.Database.Objects;
 using OsuParsers.Enums.Database;
 
-namespace OsuManiaToolbox.Settings;
+namespace OsuManiaToolbox.Core;
 
 public class GradeStrategy
 {

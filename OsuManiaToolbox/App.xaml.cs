@@ -1,15 +1,11 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using OsuManiaToolbox.Services;
-using OsuManiaToolbox.Settings;
-using OsuManiaToolbox.StarRating;
+using OsuManiaToolbox.Infrastructure.Services;
+using OsuManiaToolbox.Core.Services;
 using OsuManiaToolbox.ViewModels;
 using System.Windows;
 
 namespace OsuManiaToolbox;
 
-/// <summary>
-/// Interaction logic for App.xaml
-/// </summary>
 public partial class App : Application
 {
     public static new App Current => (App)Application.Current;
@@ -25,24 +21,42 @@ public partial class App : Application
         };
     }
 
-    private static IServiceProvider ConfigureServices()
+    private static ServiceProvider ConfigureServices()
     {
         var services = new ServiceCollection();
         services.AddSingleton<ILogDispatcher, LogDispatcher>();
-        services.AddTransient(typeof(ILogger<>), typeof(Logger<>));
+        services.AddTransient(typeof(ILogger<>), typeof(Logging<>));
 
-        services.AddSingleton<SettingsService>();
-        services.AddSingleton(sp => sp.GetRequiredService<SettingsService>().Common);
-        services.AddSingleton(sp=> sp.GetRequiredService<SettingsService>().Regrade);
-        services.AddSingleton(sp => sp.GetRequiredService<SettingsService>().StarRating);
+        services.AddSingleton<ISettingsService, SettingsService>();
 
-        services.AddSingleton<OsuFileService>();
+        services.AddSingleton<IOsuFileService, OsuFileService>();
         services.AddSingleton<IBeatmapDbService, BeatmapDbService>();
         services.AddSingleton<IScoreDbService, ScoreDbService>();
+        services.AddSingleton<ICollectionDbService, CollectionDbService>();
 
         services.AddSingleton<RegradeView>();
         services.AddSingleton<StarRatingView>();
+        services.AddSingleton<FilterView>();
+
+        services.AddTransient<MainWindow>();
 
         return services.BuildServiceProvider();
+    }
+
+    protected override void OnStartup(StartupEventArgs e)
+    {
+        try
+        {
+            base.OnStartup(e);
+
+            var mainWindow = Services.GetRequiredService<MainWindow>();
+            mainWindow.Show();
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"应用程序启动失败: {ex.Message}\n\n{ex.StackTrace}", "启动错误",
+                MessageBoxButton.OK, MessageBoxImage.Error);
+            Shutdown();
+        }
     }
 }

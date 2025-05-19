@@ -1,15 +1,9 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace OsuManiaToolbox.StarRating;
+namespace OsuManiaToolbox.Settings;
 
 public partial class StarRatingSettings : ObservableObject
 {
-    [ObservableProperty]
-    private bool _exclude4K = true;
-
-    [ObservableProperty]
-    private double _minSR = 3;
-
     [ObservableProperty]
     private bool _forceUpdate = false;
 }

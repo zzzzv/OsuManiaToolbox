@@ -3,13 +3,14 @@ using OsuParsers.Enums;
 using StarRatingRebirth;
 using System.IO;
 using CommunityToolkit.Mvvm.ComponentModel;
-using OsuManiaToolbox.Services;
+using OsuManiaToolbox.Settings;
+using OsuManiaToolbox.Core.Services;
 
-namespace OsuManiaToolbox.StarRating;
+namespace OsuManiaToolbox.ViewModels;
 
 public partial class StarRatingView : ObservableObject
 {
-    private readonly OsuFileService _fileService;
+    private readonly IOsuFileService _fileService;
     private readonly IBeatmapDbService _beatmapDb;
     private readonly ILogger _logger;
     private CancellationTokenSource? _cancellationTokenSource;
@@ -23,9 +24,9 @@ public partial class StarRatingView : ObservableObject
 
     public StarRatingSettings Settings { get; }
 
-    public StarRatingView(StarRatingSettings settings, OsuFileService fileService, IBeatmapDbService beatmapDb, ILogger<StarRatingView> logger)
+    public StarRatingView(ISettingsService settingsService, IOsuFileService fileService, IBeatmapDbService beatmapDb, ILogger<StarRatingView> logger)
     {
-        Settings = settings;
+        Settings = settingsService.GetSettings<StarRatingSettings>();
         _fileService = fileService;
         _beatmapDb = beatmapDb;
         _logger = logger;
@@ -65,11 +66,7 @@ public partial class StarRatingView : ObservableObject
 
     private void StarRatingTask(CancellationToken token)
     {
-        var beatmapFilter = _beatmapDb.Where(x => x.Ruleset == Ruleset.Mania && x.ManiaStarRating[Mods.None] >= Settings.MinSR);
-        if (Settings.Exclude4K)
-        {
-            beatmapFilter = beatmapFilter.Where(x => x.CircleSize != 4);
-        }
+        var beatmapFilter = _beatmapDb.Where(x => x.Ruleset == Ruleset.Mania);
         if (!Settings.ForceUpdate)
         {
             beatmapFilter = beatmapFilter.Where(beatmaps => beatmaps.ManiaStarRating[Mods.None] == beatmaps.ManiaStarRating[Mods.Easy]);

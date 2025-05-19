@@ -6,7 +6,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
-    <Version>0.1.2</Version>
+    <Version>0.2.0</Version>
     <PublishSingleFile>true</PublishSingleFile>
     <PublishDir>bin\publish</PublishDir>
     <SelfContained>false</SelfContained>
@@ -17,9 +17,14 @@
 
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.4" />
+    <PackageReference Include="DynamicExpresso.Core" Version="2.19.1" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.5" />
     <PackageReference Include="StarRatingRebirth" Version="0.1.1" />
     <PackageReference Include="zzzzv.OsuParsers" Version="1.7.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
   </ItemGroup>
 
 </Project>

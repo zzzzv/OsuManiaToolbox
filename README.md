@@ -1,4 +1,6 @@
 # osu!mania工具箱
-用于改本地osu!.db, 方便按难度选谱
-![image](https://github.com/user-attachments/assets/d50bcf06-dd82-401b-9972-5f5b78ede50b)
-
+用于改本地db文件, 方便按难度选谱
+## 功能
+- 自定义成绩评级
+- 使用xxy算法重算SR，包括HT DT
+- 用表达式筛选谱面存入收藏夹

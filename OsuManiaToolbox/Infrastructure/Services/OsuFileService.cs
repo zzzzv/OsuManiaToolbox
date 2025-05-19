@@ -1,12 +1,13 @@
 ﻿using System.IO;
+using OsuManiaToolbox.Core.Services;
 using OsuManiaToolbox.Settings;
 using OsuParsers.Database.Objects;
 
-namespace OsuManiaToolbox.Services;
+namespace OsuManiaToolbox.Infrastructure.Services;
 
-public class OsuFileService(CommonSettings settings)
+public class OsuFileService(ISettingsService settingsService) : IOsuFileService
 {
-    private readonly CommonSettings _settings = settings;
+    private readonly CommonSettings _settings = settingsService.GetSettings<CommonSettings>();
 
     public string BeatmapDbPath => Path.Combine(_settings.OsuPath, "osu!.db");
     public string ScoreDbPath => Path.Combine(_settings.OsuPath, "scores.db");

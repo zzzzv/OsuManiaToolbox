@@ -1,7 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using OsuManiaToolbox.Services;
-using OsuManiaToolbox.Settings;
-using OsuManiaToolbox.StarRating;
+﻿using OsuManiaToolbox.Settings;
+using OsuManiaToolbox.Core.Services;
 using OsuManiaToolbox.ViewModels;
 using System.Reflection;
 using System.Windows;
@@ -14,21 +12,27 @@ namespace OsuManiaToolbox;
 public partial class MainWindow : Window
 {
     private readonly ILogDispatcher _logDispatcher;
-    private readonly SettingsService _settingsService;
+    private readonly ISettingsService _settingsService;
 
-    public CommonSettings Settings => _settingsService.Common;
+    public CommonSettings Settings => _settingsService.GetSettings<CommonSettings>();
     public RegradeView Regrade { get; }
     public StarRatingView StarRating { get; }
+    public FilterView Filter { get; }
 
-    public MainWindow()
+    public MainWindow(
+        ILogDispatcher logDispatcher,
+        ISettingsService settingsService,
+        RegradeView regradeView,
+        StarRatingView starRatingView,
+        FilterView filterView)
     {
         InitializeComponent();
 
-        var services = App.Current.Services;
-        _logDispatcher = services.GetRequiredService<ILogDispatcher>();
-        _settingsService = services.GetRequiredService<SettingsService>();
-        Regrade = services.GetRequiredService<RegradeView>();
-        StarRating = services.GetRequiredService<StarRatingView>();
+        _logDispatcher = logDispatcher;
+        _settingsService = settingsService;
+        Regrade = regradeView;
+        StarRating = starRatingView;
+        Filter = filterView;
 
         DataContext = this;
 

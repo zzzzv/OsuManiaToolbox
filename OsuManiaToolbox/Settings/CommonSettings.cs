@@ -1,5 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using OsuManiaToolbox.Services;
+using OsuManiaToolbox.Core.Services;
 
 namespace OsuManiaToolbox.Settings;
 

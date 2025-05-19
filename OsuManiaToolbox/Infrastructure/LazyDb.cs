@@ -1,14 +1,15 @@
 ﻿using OsuManiaToolbox.Settings;
 using System.Collections;
+using OsuManiaToolbox.Core.Services;
 
-namespace OsuManiaToolbox.Services;
+namespace OsuManiaToolbox.Infrastructure;
 
-public class LazyDb<TDatabase, TItem>(string filePath, IDbAdapter<TDatabase, TItem> adapter, CommonSettings settings, ILogger logger)
+public class LazyDb<TDatabase, TItem>(string filePath, IDbAdapter<TDatabase, TItem> adapter, ISettingsService settingsService, ILogger logger)
     : IReadOnlyList<TItem> where TDatabase : class
 {
     private readonly string _filePath = filePath;
     private readonly IDbAdapter<TDatabase, TItem> _adapter = adapter;
-    private readonly CommonSettings _settings = settings;
+    private readonly CommonSettings _settings = settingsService.GetSettings<CommonSettings>();
     private readonly ILogger _logger = logger;
 
     private TDatabase? _db;

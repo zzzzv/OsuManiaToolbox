@@ -83,18 +83,6 @@
                  TextWrapping="Wrap"/>
       <Separator />
       <StackPanel Orientation="Horizontal">
-        <TextBlock Text="排除4K"/>
-        <CheckBox IsChecked="{Binding StarRating.Settings.Exclude4K}"/>
-        <TextBlock Text="不玩4K但有很多4K谱面勾选提速"/>
-      </StackPanel>
-      <Separator />
-      <StackPanel Orientation="Horizontal">
-        <TextBlock Text="最低SR"/>
-        <TextBox Text="{Binding StarRating.Settings.MinSR}" MinWidth="20"/>
-        <TextBlock Text="太低的不打，排除掉"/>
-      </StackPanel>
-      <Separator />
-      <StackPanel Orientation="Horizontal">
         <TextBlock Text="强制重算"/>
         <CheckBox IsChecked="{Binding StarRating.Settings.ForceUpdate}"/>
         <TextBlock Text="默认已经更新为XXY SR的直接跳过"/>
@@ -104,13 +92,38 @@
         <Button Content="取消" Command="{Binding StarRating.CancelCommand}"/>
       </UniformGrid>
       <Border />
+      <TextBlock Text="谱面筛选，过滤器无视大小写" TextWrapping="Wrap"/>
+      <TextBlock Text="Key"/>
+      <TextBlock Text="Status: 可用值R L Q P"/>
+      <TextBlock Text="Acc: 0-100"/>
+      <TextBlock Text="Score: 0-1000000"/>
+      <TextBlock Text="SR(mod): mod可用值HT DT EZ HR"/>
+      <Separator/>
+      <DockPanel>
+        <TextBlock Text="过滤条件" VerticalAlignment="Center"/>
+        <Button Content="删除" DockPanel.Dock="Right" Command="{Binding Filter.DeleteItem}"/>
+        <Button Content="新建" DockPanel.Dock="Right" Command="{Binding Filter.CreateItem}"/>
+        <ComboBox ItemsSource="{Binding Filter.Settings.History}" 
+                  SelectedItem="{Binding Filter.Selected}"
+                  DisplayMemberPath="Expression"
+                  Name="filterComboBox"
+                  IsEditable="True"
+                  IsTextSearchEnabled="False"
+                  Text="{Binding Filter.Selected.Expression, UpdateSourceTrigger=PropertyChanged}"/>
+      </DockPanel>
+      <Separator/>
+      <DockPanel>
+        <TextBlock Text="收藏夹名称"/>
+        <TextBox Text="{Binding Filter.Selected.CollectionName}" MinWidth="200"/>
+        <Button Content="生成收藏夹" Command="{Binding Filter.CreateCollection}"/>
+      </DockPanel>
+      <Border />
       <TextBlock>
         <Run Text="项目地址"/>
         <Hyperlink NavigateUri="https://github.com/zzzzv/OsuManiaToolbox">
           https://github.com/zzzzv/OsuManiaToolbox
         </Hyperlink>
         <LineBreak/>
-        <Run Text="这里一直是最新版，群文件不一定想得起来发"/>
       </TextBlock>
     </StackPanel>
     <GridSplitter Grid.Column="1" 

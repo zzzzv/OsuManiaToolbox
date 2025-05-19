@@ -1,6 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.Input;
-using OsuManiaToolbox.Services;
 using OsuManiaToolbox.Settings;
+using OsuManiaToolbox.Core.Services;
 using OsuParsers.Database.Objects;
 using OsuParsers.Enums;
 using OsuParsers.Enums.Database;
@@ -17,9 +17,9 @@ public class RegradeView
 
     public RegradeSettings Settings { get; }
 
-    public RegradeView(RegradeSettings settings, IBeatmapDbService beatmapDb, IScoreDbService scoreDb, ILogger<RegradeView> logger)
+    public RegradeView(ISettingsService settingsService, IBeatmapDbService beatmapDb, IScoreDbService scoreDb, ILogger<RegradeView> logger)
     {
-        Settings = settings;
+        Settings = settingsService.GetSettings<RegradeSettings>();
         _beatmapDb = beatmapDb;
         _scoreDb = scoreDb;
         _logger = logger;
