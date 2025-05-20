@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:OsuManiaToolbox"
         xmlns:settings="clr-namespace:OsuManiaToolbox.Settings"
+        xmlns:infra="clr-namespace:OsuManiaToolbox.Infrastructure"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance Type=local:MainWindow, IsDesignTimeCreatable=True}"
         Height="500" Width="800">
@@ -92,15 +93,9 @@
         <Button Content="取消" Command="{Binding StarRating.CancelCommand}"/>
       </UniformGrid>
       <Border />
-      <Expander Header="谱面筛选，过滤器无视大小写" IsExpanded="False" ExpandDirection="Down">
-        <StackPanel>
-          <TextBlock Text="Key"/>
-          <TextBlock Text="Status: 可用值R L Q P"/>
-          <TextBlock Text="Acc: 0-100"/>
-          <TextBlock Text="Score: 0-1000000"/>
-          <TextBlock Text="SR(mod): mod可用值HT DT EZ HR"/>
-        </StackPanel>
-      </Expander>
+      <DockPanel>
+        <TextBlock Text="谱面筛选，过滤器无视大小写。字段说明见右侧Tab"/>
+      </DockPanel>
       <Separator/>
       <DockPanel>
         <TextBlock Text="过滤条件" VerticalAlignment="Center"/>
@@ -141,12 +136,38 @@
                   VerticalAlignment="Stretch" 
                   HorizontalAlignment="Center" 
                   Background="Gray"/>
-    <RichTextBox Name="logTextBox" Grid.Column="2" IsReadOnly="True" VerticalScrollBarVisibility="Auto">
-      <RichTextBox.Resources>
-        <Style TargetType="{x:Type Paragraph}">
-          <Setter Property="Margin" Value="0"/>
-        </Style>
-      </RichTextBox.Resources>
-    </RichTextBox>
+    <TabControl Grid.Column="2" Name="tabRight">
+      <TabItem Header="日志">
+        <RichTextBox Name="logTextBox" IsReadOnly="True" VerticalScrollBarVisibility="Auto">
+          <RichTextBox.Resources>
+            <Style TargetType="{x:Type Paragraph}">
+              <Setter Property="Margin" Value="0"/>
+            </Style>
+          </RichTextBox.Resources>
+        </RichTextBox>
+      </TabItem>
+      <TabItem Header="过滤器说明">
+        <ScrollViewer>
+          <StackPanel>
+            <DataGrid ItemsSource="{x:Static infra:FilterContext.DescriptionTable}"
+                    AutoGenerateColumns="True"
+                    IsReadOnly="True"
+                    CanUserResizeColumns="False"
+                    CanUserResizeRows="False"
+                    GridLinesVisibility="Horizontal">
+              <DataGrid.HorizontalGridLinesBrush>
+                <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.ActiveBorderColorKey}}"/>
+              </DataGrid.HorizontalGridLinesBrush>
+            </DataGrid>
+            <Expander Header="DbBeatmap字段">
+              <TextBlock Text="{x:Static infra:FilterContext.DbBeatmapDescription}" TextWrapping="Wrap"/>
+            </Expander>
+            <Expander Header="Score字段">
+              <TextBlock Text="{x:Static infra:FilterContext.ScoreDescription}" TextWrapping="Wrap"/>
+            </Expander>
+          </StackPanel>
+        </ScrollViewer>
+      </TabItem>
+    </TabControl>
   </Grid>
 </Window>

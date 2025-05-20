@@ -1,25 +1,15 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using CsvHelper;
-using System.Text;
-using DynamicExpresso;
 using OsuManiaToolbox.Core.Services;
 using OsuManiaToolbox.Settings;
 using OsuParsers.Database.Objects;
 using OsuParsers.Enums;
-using OsuParsers.Enums.Database;
-using System.Globalization;
-using System.IO;
-using System.Text.RegularExpressions;
-using System.Diagnostics;
 
 namespace OsuManiaToolbox.ViewModels;
 
 public partial class FilterView : ObservableObject
 {
     private readonly IBeatmapDbService _beatmapDb;
-    private readonly IScoreDbService _scoreDb;
-    private readonly ICollectionDbService _collectionDb;
     private readonly ILogger _logger;
     private readonly IBeatmapFilterService _filterService;
     private readonly IExportService _exportService;
@@ -34,18 +24,21 @@ public partial class FilterView : ObservableObject
     [ObservableProperty]
     private FilterHistoryItem _selected;
 
-    public FilterView(ISettingsService settingsService, IBeatmapDbService beatmapDb, IScoreDbService scoreDb, 
-        ICollectionDbService collectionDb, ILogService logService, IBeatmapFilterService filterService, IExportService exportService)
+    public FilterView(ISettingsService settingsService, IBeatmapDbService beatmapDb, ILogService logService,
+        IBeatmapFilterService filterService, IExportService exportService)
     {
         Settings = settingsService.GetSettings<FilterSettings>();
         _beatmapDb = beatmapDb;
-        _scoreDb = scoreDb;
-        _collectionDb = collectionDb;
         _logger = logService.GetLogger(this);
         _filterService = filterService;
         _exportService = exportService;
 
-        _selected = Settings.History.FirstOrDefault() ?? new FilterHistoryItem();
+        if (!Settings.History.Any())
+        {
+            Settings.History.Add(new FilterHistoryItem());
+        }
+        Selected = Settings.History[0];
+
         CreateItem = new RelayCommand(CreateItemRun);
         DeleteItem = new RelayCommand(DeleteItemRun, CanDeleteItem);
         CreateCollection = new RelayCommand(CreateCollectionRun);

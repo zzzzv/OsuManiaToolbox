@@ -21,6 +21,10 @@
       <Setter Property="BorderBrush" Value="Black"/>
       <Setter Property="BorderThickness" Value="1"/>
     </Style>
+    <Style TargetType="ComboBoxItem">
+      <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+      <Setter Property="VerticalContentAlignment" Value="Center"/>
+    </Style>
 
     <converters:EnumToStringConverter x:Key="EnumToStringConverter"/>
   </Application.Resources>

@@ -1,6 +1,6 @@
-﻿using OsuParsers.Database;
-using OsuParsers.Database.Objects;
+﻿using OsuParsers.Database.Objects;
 using OsuParsers.Enums;
+using OsuParsers.Enums.Database;
 
 namespace OsuManiaToolbox;
 
@@ -32,5 +32,17 @@ public static class Extensions
         return string.Join('&', Enum.GetValues<Mods>()
             .Where(x => x != Mods.None && mods.HasFlag(x))
             .Select(x => x.Acronym()));
+    }
+
+    public static string Acronym(this RankedStatus status)
+    {
+        return status switch
+        {
+            RankedStatus.Ranked => "R",
+            RankedStatus.Loved => "L",
+            RankedStatus.Qualified => "Q",
+            RankedStatus.Pending => "P",
+            _ => string.Empty,
+        };
     }
 }
