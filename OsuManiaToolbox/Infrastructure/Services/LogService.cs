@@ -3,11 +3,21 @@ using OsuManiaToolbox.Core.Services;
 
 namespace OsuManiaToolbox.Infrastructure.Services;
 
-public class Logging<T>(ILogDispatcher logProvider) : ILogger<T>
+public class LogService : ILogService
+{
+    public ILogDispatcher LogDispatcher { get; } = new LogDispatcher();
+
+    public ILogger GetLogger(string category)
+    {
+        return new Logger(LogDispatcher, category);
+    }
+}
+
+public class Logger(ILogDispatcher logProvider, string category) : ILogger
 {
     private readonly ILogDispatcher _logProvider = logProvider;
 
-    public string Category => typeof(T).Name;
+    public string Category { get; } = category;
 
     public void Log(string message, LogLevel level = LogLevel.Info)
     {

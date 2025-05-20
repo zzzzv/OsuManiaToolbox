@@ -31,11 +31,23 @@ public interface ILogger
     }
 }
 
-public interface ILogger<T> : ILogger { }
-
 public interface ILogDispatcher
 {
     event Action<IEnumerable<LogMessage>>? LogsReceived;
     public int Interval { get; set; }
     void AppendLog(LogMessage log);
+}
+
+public interface ILogService
+{
+    ILogDispatcher LogDispatcher { get; }
+    ILogger GetLogger(string category);
+    ILogger GetLogger<T>()
+    {
+        return GetLogger(typeof(T).Name);
+    }
+    ILogger GetLogger(object context)
+    {
+        return GetLogger(context.GetType().Name);
+    }
 }

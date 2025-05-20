@@ -20,7 +20,7 @@ public partial class MainWindow : Window
     public FilterView Filter { get; }
 
     public MainWindow(
-        ILogDispatcher logDispatcher,
+        ILogService logService,
         ISettingsService settingsService,
         RegradeView regradeView,
         StarRatingView starRatingView,
@@ -28,7 +28,7 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
 
-        _logDispatcher = logDispatcher;
+        _logDispatcher = logService.LogDispatcher;
         _settingsService = settingsService;
         Regrade = regradeView;
         StarRating = starRatingView;

@@ -17,12 +17,12 @@ public class RegradeView
 
     public RegradeSettings Settings { get; }
 
-    public RegradeView(ISettingsService settingsService, IBeatmapDbService beatmapDb, IScoreDbService scoreDb, ILogger<RegradeView> logger)
+    public RegradeView(ISettingsService settingsService, IBeatmapDbService beatmapDb, IScoreDbService scoreDb, ILogService logService)
     {
         Settings = settingsService.GetSettings<RegradeSettings>();
         _beatmapDb = beatmapDb;
         _scoreDb = scoreDb;
-        _logger = logger;
+        _logger = logService.GetLogger(this);
         RegradeCommand = new RelayCommand(RegradeRun);
     }
 
@@ -30,7 +30,7 @@ public class RegradeView
     {
         try
         {
-            var beatmaps = _beatmapDb.Where(x => x.Ruleset == Ruleset.Mania).ToArray();
+            var beatmaps = _beatmapDb.Items.Where(x => x.Ruleset == Ruleset.Mania).ToArray();
             _logger.Info($"共有{beatmaps.Length}张Mania谱面");
 
             int count = 0;
@@ -38,7 +38,7 @@ public class RegradeView
             {
                 if (beatmap.MD5Hash == null) continue;
 
-                if (_scoreDb.TryGetValue(beatmap.MD5Hash, out var scores))
+                if (_scoreDb.Index.TryGetValue(beatmap.MD5Hash, out var scores))
                 {
                     var grade = GetGrade(scores, Settings);
                     if (grade != null)

@@ -24,12 +24,12 @@ public partial class StarRatingView : ObservableObject
 
     public StarRatingSettings Settings { get; }
 
-    public StarRatingView(ISettingsService settingsService, IOsuFileService fileService, IBeatmapDbService beatmapDb, ILogger<StarRatingView> logger)
+    public StarRatingView(ISettingsService settingsService, IOsuFileService fileService, IBeatmapDbService beatmapDb, ILogService logService)
     {
         Settings = settingsService.GetSettings<StarRatingSettings>();
         _fileService = fileService;
         _beatmapDb = beatmapDb;
-        _logger = logger;
+        _logger = logService.GetLogger(this);
         RunCommand = new AsyncRelayCommand(RunAsync, () => !IsRunning);
         CancelCommand = new RelayCommand(CancelOperation, () => IsRunning);
     }
@@ -66,7 +66,7 @@ public partial class StarRatingView : ObservableObject
 
     private void StarRatingTask(CancellationToken token)
     {
-        var beatmapFilter = _beatmapDb.Where(x => x.Ruleset == Ruleset.Mania);
+        var beatmapFilter = _beatmapDb.Items.Where(x => x.Ruleset == Ruleset.Mania);
         if (!Settings.ForceUpdate)
         {
             beatmapFilter = beatmapFilter.Where(beatmaps => beatmaps.ManiaStarRating[Mods.None] == beatmaps.ManiaStarRating[Mods.Easy]);

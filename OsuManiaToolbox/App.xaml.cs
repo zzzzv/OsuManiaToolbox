@@ -15,7 +15,7 @@ public partial class App : Application
         Services = ConfigureServices();
         DispatcherUnhandledException += (s, e) =>
         {
-            var logger = Services.GetRequiredService<ILogger<App>>();
+            var logger = Services.GetRequiredService<ILogService>().GetLogger(this);
             logger.Exception(e.Exception);
             e.Handled = true;
         };
@@ -24,15 +24,14 @@ public partial class App : Application
     private static ServiceProvider ConfigureServices()
     {
         var services = new ServiceCollection();
-        services.AddSingleton<ILogDispatcher, LogDispatcher>();
-        services.AddTransient(typeof(ILogger<>), typeof(Logging<>));
-
+        services.AddSingleton<ILogService, LogService>();
         services.AddSingleton<ISettingsService, SettingsService>();
-
         services.AddSingleton<IOsuFileService, OsuFileService>();
         services.AddSingleton<IBeatmapDbService, BeatmapDbService>();
         services.AddSingleton<IScoreDbService, ScoreDbService>();
         services.AddSingleton<ICollectionDbService, CollectionDbService>();
+        services.AddSingleton<IExportService, ExportService>();
+        services.AddSingleton<IBeatmapFilterService, BeatmapFilterService>();
 
         services.AddSingleton<RegradeView>();
         services.AddSingleton<StarRatingView>();

@@ -9,7 +9,7 @@ public interface IDbAdapter<TDatabase, TItem> where TDatabase : class
     TDatabase Load(string filePath);
     void Save(TDatabase database, string filePath);
     Dictionary<string, TItem> CreateIndex(TDatabase database);
-    IReadOnlyList<TItem> GetList(TDatabase database);
+    List<TItem> GetList(TDatabase database);
 }
 
 public class BeatmapDbAdapter : IDbAdapter<OsuDatabase, DbBeatmap>
@@ -26,7 +26,7 @@ public class BeatmapDbAdapter : IDbAdapter<OsuDatabase, DbBeatmap>
     {
         return database.Beatmaps.ToDictionary(x => x.MD5Hash, x => x);
     }
-    public IReadOnlyList<DbBeatmap> GetList(OsuDatabase database)
+    public List<DbBeatmap> GetList(OsuDatabase database)
     {
         return database.Beatmaps;
     }
@@ -46,7 +46,7 @@ public class ScoreDbAdapter : IDbAdapter<ScoresDatabase, List<Score>>
     {
         return database.Scores.ToDictionary(x => x.Item1, x => x.Item2);
     }
-    public IReadOnlyList<List<Score>> GetList(ScoresDatabase database)
+    public List<List<Score>> GetList(ScoresDatabase database)
     {
         return database.Scores.Select(x => x.Item2).ToList();
     }
@@ -66,7 +66,7 @@ public class CollectionDbAdapter : IDbAdapter<CollectionDatabase, Collection>
     {
         return database.Collections.ToDictionary(x => x.Name, x => x);
     }
-    public IReadOnlyList<Collection> GetList(CollectionDatabase database)
+    public List<Collection> GetList(CollectionDatabase database)
     {
         return database.Collections;
     }
