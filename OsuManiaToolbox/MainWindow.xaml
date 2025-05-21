@@ -93,7 +93,7 @@
       </UniformGrid>
       <Border />
       <DockPanel>
-        <TextBlock Text="谱面筛选，过滤器无视大小写。字段说明见右侧Tab"/>
+        <TextBlock Text="谱面筛选，无视大小写，字符串加双引号。字段说明见右侧Tab" TextWrapping="Wrap"/>
       </DockPanel>
       <Separator/>
       <DockPanel>
@@ -108,6 +108,14 @@
                   IsTextSearchEnabled="False"
                   Text="{Binding Filter.Selected.Expression, UpdateSourceTrigger=PropertyChanged}"/>
       </DockPanel>
+      <StackPanel Orientation="Horizontal">
+        <TextBlock Text="排序(负号逆序)"/>
+        <TextBox Text="{Binding Filter.Selected.OrderBy}" MinWidth="50"/>
+        <TextBlock Text="Skip"/>
+        <TextBox Text="{Binding Filter.Selected.Skip}" MinWidth="20"/>
+        <TextBlock Text="Take"/>
+        <TextBox Text="{Binding Filter.Selected.Take}" MinWidth="20"/>
+      </StackPanel>
       <Separator/>
       <DockPanel>
         <TextBlock Text="收藏夹名称"/>

@@ -5,6 +5,6 @@ namespace OsuManiaToolbox.Core.Services;
 
 public interface IBeatmapFilterService
 {
-    IEnumerable<DbBeatmap> Filter(string expression, IEnumerable<DbBeatmap> beatmaps);
+    IEnumerable<DbBeatmap> Filter(string expression, IEnumerable<DbBeatmap> beatmaps, string order);
     DataView MetaTable { get; }
 }

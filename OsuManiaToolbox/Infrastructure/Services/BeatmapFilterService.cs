@@ -9,6 +9,7 @@ namespace OsuManiaToolbox.Infrastructure.Services;
 public partial class BeatmapFilterService : IBeatmapFilterService
 {
     public delegate bool FilterFunc(FilterContext context);
+    public delegate object OrderFunc(FilterContext context);
 
     private readonly IScoreDbService _scoreDb;
     private readonly ILogger _logger;
@@ -21,12 +22,19 @@ public partial class BeatmapFilterService : IBeatmapFilterService
 
     public DataView MetaTable => FilterContext.MetaTable;
 
-    public IEnumerable<DbBeatmap> Filter(string expression, IEnumerable<DbBeatmap> beatmaps)
+    public IEnumerable<DbBeatmap> Filter(string expression, IEnumerable<DbBeatmap> beatmaps, string order)
     {
-        var checkedExpression = CheckExpression(expression);
-        _logger.Info($"表达式为 {checkedExpression}");
-        var func = Build(checkedExpression);
-        return beatmaps.Where(p => func(new FilterContext(p, _scoreDb)));
+        expression = CheckExpression(expression);
+        _logger.Info($"表达式为 {expression}");
+        var interpreter = new Interpreter(InterpreterOptions.DefaultCaseInsensitive);
+        var func = interpreter.ParseAsDelegate<FilterFunc>(expression, "this");
+        var result = beatmaps.Select(p => new FilterContext(p, _scoreDb)).Where(p => func(p));
+        if (order != string.Empty)
+        {
+            var orderFunc = interpreter.ParseAsDelegate<OrderFunc>(order, "this");
+            result = result.OrderBy(p => orderFunc(p));
+        }
+        return result.Select(p => p.Bm);
     }
 
     private string CheckExpression(string expression)
@@ -37,12 +45,6 @@ public partial class BeatmapFilterService : IBeatmapFilterService
             _logger.Warning($"表达式 {expression} 应使用 == 而不是 =");
         }
         return replaced;
-    }
-
-    private FilterFunc Build(string expression)
-    {
-        var interpreter = new Interpreter(InterpreterOptions.DefaultCaseInsensitive);
-        return interpreter.ParseAsDelegate<FilterFunc>(expression, "this");
     }
 
     [GeneratedRegex(@"(?<![=<>])=(?![=<>])")]

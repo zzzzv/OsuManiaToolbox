@@ -121,10 +121,15 @@ public partial class FilterView : ObservableObject
     {
         var beatmaps = _beatmapDb.Items.Where(x => x.Ruleset == Ruleset.Mania).ToArray();
         _logger.Info($"共有{beatmaps.Length}张Mania谱面");
-        var result = _filterService.Filter(Selected.Expression, beatmaps).ToArray();
-        _logger.Info($"符合条件的谱面有{result.Length}张");
+        var result = _filterService.Filter(Selected.Expression, beatmaps, Selected.OrderBy).Skip(Selected.Skip);
+        if (Selected.Take != null)
+        {
+            result = result.Take(Selected.Take.Value);
+        }
+        var arr = result.ToArray();
+        _logger.Info($"符合条件的谱面有{arr.Length}张");
         Selected = Settings.MoveFirst(Selected);
-        return result;
+        return arr;
     }
 
     private static string GetPropertyNames<T>()

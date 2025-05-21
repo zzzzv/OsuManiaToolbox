@@ -35,6 +35,12 @@ public class FilterContext : BeatmapData
     [Description("面数量")]
     public double LN => Bm.SlidersCount;
 
+    [Description("时长(秒)")]
+    public double Length => Bm.TotalTime / 1000.0;
+
+    [Description("谱面最后修改至今天数")]
+    public double ModifyDays => (DateTime.Now - Bm.LastModifiedTime).TotalDays;
+
     [Description("最高Acc")]
     public double Acc => Scores.AccMax?.ManiaAcc() ?? double.NaN;
 
@@ -60,6 +66,25 @@ public class FilterContext : BeatmapData
     public double SR(Mods mod = Mods.None)
     {
         return Bm.ManiaStarRating[mod];
+    }
+
+    [Description("创建者名字包含")]
+    public bool Creator(string name)
+    {
+        return Bm.Creator.Contains(name, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Description("谱面难度包含")]
+    public bool Diff(string name)
+    {
+        return Bm.Difficulty.Contains(name, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Description("全文搜索(标题、作者、创建者、难度)")]
+    public bool Text(string text)
+    {
+        return new string[] { Bm.Title, Bm.TitleUnicode, Bm.Artist, Bm.ArtistUnicode, Bm.Creator, Bm.Difficulty }
+            .Any(x => x.Contains(text, StringComparison.OrdinalIgnoreCase));
     }
 
     public static DataView MetaTable
