@@ -7,14 +7,6 @@ using System.Text.Json.Serialization;
 
 namespace OsuManiaToolbox.Settings;
 
-public partial class GradeThreshold(Grade grade, double acc) : ObservableObject
-{
-    public Grade Grade { get; set; } = grade;
-
-    [ObservableProperty]
-    private double _acc = acc;
-}
-
 public partial class ModGradeStrategyIndex(Mods mod) : ObservableObject
 {
     public Mods Mod { get; set; } = mod;
@@ -22,6 +14,9 @@ public partial class ModGradeStrategyIndex(Mods mod) : ObservableObject
 
     [ObservableProperty]
     private int _index = 1;
+
+    [JsonIgnore]
+    public IReadOnlyList<GradeStrategy> All => GradeStrategy.All;
 }
 
 public partial class RegradeSettings : ObservableObject
@@ -40,14 +35,6 @@ public partial class RegradeSettings : ObservableObject
         new ModGradeStrategyIndex(Mods.HalfTime),
     ];
 
-    [JsonIgnore]
-    public readonly static IReadOnlyList<GradeStrategy> AvailableStrategies = [
-        new GradeStrategy(),
-        new FixedGradeStrategy(Grade.D),
-        new FixedGradeStrategy(Grade.F),
-        new IgnoreGradeStrategy(),
-    ];
-
     public GradeStrategy GetGradeStrategy(Mods mods)
     {
         var maxIndex = ModGradeStrategyIndexes
@@ -55,6 +42,6 @@ public partial class RegradeSettings : ObservableObject
             .Select(x => x.Index)
             .DefaultIfEmpty(0)
             .Max();
-        return AvailableStrategies[maxIndex];
+        return GradeStrategy.All[maxIndex];
     }
 }

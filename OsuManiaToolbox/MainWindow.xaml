@@ -5,9 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:OsuManiaToolbox"
         xmlns:settings="clr-namespace:OsuManiaToolbox.Settings"
-        xmlns:infra="clr-namespace:OsuManiaToolbox.Infrastructure"
         mc:Ignorable="d"
-        d:DataContext="{d:DesignInstance Type=local:MainWindow, IsDesignTimeCreatable=True}"
+        d:DataContext="{d:DesignInstance Type=local:MainWindow, IsDesignTimeCreatable=False}"
         Height="500" Width="800">
   <Grid>
     <Grid.ColumnDefinitions>
@@ -25,7 +24,7 @@
         <TextBlock Text="写入DB时备份"/>
         <CheckBox IsChecked="{Binding Settings.BackupDb}"/>
         <TextBlock Text="日志等级"/>
-        <ComboBox ItemsSource="{x:Static settings:CommonSettings.LogLevels}" 
+        <ComboBox ItemsSource="{Binding Settings.LogLevelAll,Mode=OneTime}" 
                   SelectedItem="{Binding Settings.LogLevel}">
           <ComboBox.ItemTemplate>
             <DataTemplate>
@@ -72,7 +71,7 @@
           <DataTemplate>
             <DockPanel>
               <TextBlock Text="{Binding ModAcronym}"/>
-              <ComboBox ItemsSource="{x:Static settings:RegradeSettings.AvailableStrategies}" DisplayMemberPath="Name"
+              <ComboBox ItemsSource="{Binding All,Mode=OneTime}" DisplayMemberPath="Name"
                   SelectedIndex="{Binding Index}"/>
             </DockPanel>
           </DataTemplate>
@@ -149,21 +148,21 @@
       <TabItem Header="过滤器说明">
         <ScrollViewer>
           <StackPanel>
-            <DataGrid ItemsSource="{x:Static infra:FilterContext.DescriptionTable}"
+            <DataGrid ItemsSource="{Binding Filter.MetaTable}"
                     AutoGenerateColumns="True"
                     IsReadOnly="True"
                     CanUserResizeColumns="False"
                     CanUserResizeRows="False"
                     GridLinesVisibility="Horizontal">
               <DataGrid.HorizontalGridLinesBrush>
-                <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.ActiveBorderColorKey}}"/>
+                <SolidColorBrush Color="Gainsboro"/>
               </DataGrid.HorizontalGridLinesBrush>
             </DataGrid>
             <Expander Header="DbBeatmap字段">
-              <TextBlock Text="{x:Static infra:FilterContext.DbBeatmapDescription}" TextWrapping="Wrap"/>
+              <TextBlock Text="{Binding Filter.DbBeatmapProperties,Mode=OneTime}" TextWrapping="Wrap"/>
             </Expander>
             <Expander Header="Score字段">
-              <TextBlock Text="{x:Static infra:FilterContext.ScoreDescription}" TextWrapping="Wrap"/>
+              <TextBlock Text="{Binding Filter.ScoreProperties,Mode=OneTime}" TextWrapping="Wrap"/>
             </Expander>
           </StackPanel>
         </ScrollViewer>

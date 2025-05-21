@@ -19,6 +19,8 @@ public partial class BeatmapFilterService : IBeatmapFilterService
         _logger = logService.GetLogger(this);
     }
 
+    public DataView MetaTable => FilterContext.MetaTable;
+
     public IEnumerable<DbBeatmap> Filter(string expression, IEnumerable<DbBeatmap> beatmaps)
     {
         var checkedExpression = CheckExpression(expression);

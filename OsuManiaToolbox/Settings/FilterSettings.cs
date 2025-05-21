@@ -26,6 +26,7 @@ public class FilterSettings : ObservableObject
         new FilterHistoryItem{Expression = "status==R && SR(HT)>5 && SR(HT)<SR(HT&EZ)", CollectionName = "PP HT"},
         new FilterHistoryItem{Expression = "Acc>93 && Acc<96", CollectionName="93-96"},
         new FilterHistoryItem{Expression = "LN/(LN+N)>0.5", CollectionName="LN>50%"},
+        new FilterHistoryItem{Expression = "AccDays>30", CollectionName="超过30天"},
     ];
 
     public FilterHistoryItem MoveFirst(FilterHistoryItem item)

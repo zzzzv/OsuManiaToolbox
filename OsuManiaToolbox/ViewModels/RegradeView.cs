@@ -1,6 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.Input;
-using OsuManiaToolbox.Settings;
 using OsuManiaToolbox.Core.Services;
+using OsuManiaToolbox.Settings;
 using OsuParsers.Database.Objects;
 using OsuParsers.Enums;
 using OsuParsers.Enums.Database;

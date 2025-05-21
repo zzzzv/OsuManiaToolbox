@@ -1,8 +1,16 @@
-﻿using OsuManiaToolbox.Settings;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using OsuParsers.Database.Objects;
 using OsuParsers.Enums.Database;
 
 namespace OsuManiaToolbox.Core;
+
+public partial class GradeThreshold(Grade grade, double acc) : ObservableObject
+{
+    public Grade Grade { get; set; } = grade;
+
+    [ObservableProperty]
+    private double _acc = acc;
+}
 
 public class GradeStrategy
 {
@@ -20,6 +28,13 @@ public class GradeStrategy
         }
         return Grade.F;
     }
+
+    public readonly static IReadOnlyList<GradeStrategy> All = [
+        new GradeStrategy(),
+        new FixedGradeStrategy(Grade.D),
+        new FixedGradeStrategy(Grade.F),
+        new IgnoreGradeStrategy(),
+    ];
 }
 
 public class FixedGradeStrategy(Grade? grade) : GradeStrategy

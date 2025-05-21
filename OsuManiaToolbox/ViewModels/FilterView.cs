@@ -4,6 +4,7 @@ using OsuManiaToolbox.Core.Services;
 using OsuManiaToolbox.Settings;
 using OsuParsers.Database.Objects;
 using OsuParsers.Enums;
+using System.Data;
 
 namespace OsuManiaToolbox.ViewModels;
 
@@ -20,6 +21,9 @@ public partial class FilterView : ObservableObject
     public IRelayCommand WriteCsv { get; }
 
     public FilterSettings Settings { get; }
+    public DataView MetaTable { get; }
+    public string DbBeatmapProperties => GetPropertyNames<DbBeatmap>();
+    public string ScoreProperties => GetPropertyNames<Score>();
 
     [ObservableProperty]
     private FilterHistoryItem _selected;
@@ -31,6 +35,7 @@ public partial class FilterView : ObservableObject
         _beatmapDb = beatmapDb;
         _logger = logService.GetLogger(this);
         _filterService = filterService;
+        MetaTable = _filterService.MetaTable;
         _exportService = exportService;
 
         if (!Settings.History.Any())
@@ -120,5 +125,10 @@ public partial class FilterView : ObservableObject
         _logger.Info($"符合条件的谱面有{result.Length}张");
         Selected = Settings.MoveFirst(Selected);
         return result;
+    }
+
+    private static string GetPropertyNames<T>()
+    {
+        return string.Join(", ", typeof(T).GetProperties().Select(p => p.Name));
     }
 }

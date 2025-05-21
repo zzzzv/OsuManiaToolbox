@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using OsuManiaToolbox.Core.Services;
+using System.Text.Json.Serialization;
 
 namespace OsuManiaToolbox.Settings;
 
@@ -11,8 +12,9 @@ public partial class CommonSettings : ObservableObject
     [ObservableProperty]
     private bool _backupDb = true;
 
-    public static LogLevel[] LogLevels => Enum.GetValues(typeof(LogLevel)).Cast<LogLevel>().ToArray();
-
     [ObservableProperty]
     private LogLevel _logLevel = LogLevel.Info;
+
+    [JsonIgnore]
+    public IReadOnlyList<LogLevel> LogLevelAll => Enum.GetValues(typeof(LogLevel)).Cast<LogLevel>().ToArray();
 }
