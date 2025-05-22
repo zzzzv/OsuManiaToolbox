@@ -19,7 +19,7 @@ public partial class FilterHistoryItem : ObservableObject
     private int _skip = 0;
 
     [ObservableProperty]
-    private int? _take = null;
+    private int _take = 0;
 
     [ObservableProperty]
     private string _collectionName = string.Empty;

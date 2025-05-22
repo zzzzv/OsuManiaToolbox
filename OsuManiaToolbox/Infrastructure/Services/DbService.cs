@@ -3,7 +3,7 @@ using OsuParsers.Database;
 using OsuParsers.Database.Objects;
 using OsuManiaToolbox.Core.Services;
 
-namespace OsuManiaToolbox.Infrastructure.Services;
+namespace OsuManiaToolbox.Core.Services;
 
 public abstract class DbService<TDatabase, TItem> : IDbService<TItem> where TDatabase : class
 {

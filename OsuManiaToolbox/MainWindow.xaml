@@ -4,7 +4,6 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:OsuManiaToolbox"
-        xmlns:settings="clr-namespace:OsuManiaToolbox.Settings"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance Type=local:MainWindow, IsDesignTimeCreatable=False}"
         Height="500" Width="800">
@@ -93,41 +92,8 @@
       </UniformGrid>
       <Border />
       <DockPanel>
-        <TextBlock Text="谱面筛选，无视大小写，字符串加双引号。字段说明见右侧Tab" TextWrapping="Wrap"/>
-      </DockPanel>
-      <Separator/>
-      <DockPanel>
-        <TextBlock Text="过滤条件" VerticalAlignment="Center"/>
-        <Button Content="删除" DockPanel.Dock="Right" Command="{Binding Filter.DeleteItem}"/>
-        <Button Content="新建" DockPanel.Dock="Right" Command="{Binding Filter.CreateItem}"/>
-        <ComboBox ItemsSource="{Binding Filter.Settings.History}" 
-                  SelectedItem="{Binding Filter.Selected}"
-                  DisplayMemberPath="Expression"
-                  Name="filterComboBox"
-                  IsEditable="True"
-                  IsTextSearchEnabled="False"
-                  Text="{Binding Filter.Selected.Expression, UpdateSourceTrigger=PropertyChanged}"/>
-      </DockPanel>
-      <StackPanel Orientation="Horizontal">
-        <TextBlock Text="排序(负号逆序)"/>
-        <TextBox Text="{Binding Filter.Selected.OrderBy}" MinWidth="50"/>
-        <TextBlock Text="Skip"/>
-        <TextBox Text="{Binding Filter.Selected.Skip}" MinWidth="20"/>
-        <TextBlock Text="Take"/>
-        <TextBox Text="{Binding Filter.Selected.Take}" MinWidth="20"/>
-      </StackPanel>
-      <Separator/>
-      <DockPanel>
-        <TextBlock Text="收藏夹名称"/>
-        <Button Content="生成收藏夹" DockPanel.Dock="Right" Command="{Binding Filter.CreateCollection}"/>
-        <TextBox Text="{Binding Filter.Selected.CollectionName}" MinWidth="200"/>
-      </DockPanel>
-      <Separator/>
-      <DockPanel>
-        <TextBlock Text="输出到CSV"/>
-        <Button Content="写入文件" DockPanel.Dock="Right" Command="{Binding Filter.WriteCsv}"/>
-        <TextBlock Text=".csv" DockPanel.Dock="Right"/>
-        <TextBox Text="{Binding Filter.Selected.CsvName}" MinWidth="200"/>
+        <TextBlock Text="谱面筛选，生成收藏夹或输出到CSV"/>
+        <Button Content="新建谱面浏览器窗口" Click="CreateBeatmapWindow_Click"/>
       </DockPanel>
       <Border />
       <TextBlock>
@@ -152,28 +118,6 @@
             </Style>
           </RichTextBox.Resources>
         </RichTextBox>
-      </TabItem>
-      <TabItem Header="过滤器说明">
-        <ScrollViewer>
-          <StackPanel>
-            <DataGrid ItemsSource="{Binding Filter.MetaTable}"
-                    AutoGenerateColumns="True"
-                    IsReadOnly="True"
-                    CanUserResizeColumns="False"
-                    CanUserResizeRows="False"
-                    GridLinesVisibility="Horizontal">
-              <DataGrid.HorizontalGridLinesBrush>
-                <SolidColorBrush Color="Gainsboro"/>
-              </DataGrid.HorizontalGridLinesBrush>
-            </DataGrid>
-            <Expander Header="DbBeatmap字段">
-              <TextBlock Text="{Binding Filter.DbBeatmapProperties,Mode=OneTime}" TextWrapping="Wrap"/>
-            </Expander>
-            <Expander Header="Score字段">
-              <TextBlock Text="{Binding Filter.ScoreProperties,Mode=OneTime}" TextWrapping="Wrap"/>
-            </Expander>
-          </StackPanel>
-        </ScrollViewer>
       </TabItem>
     </TabControl>
   </Grid>

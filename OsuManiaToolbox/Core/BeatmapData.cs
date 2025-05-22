@@ -2,7 +2,7 @@
 using OsuParsers.Database.Objects;
 using System.ComponentModel;
 
-namespace OsuManiaToolbox.Infrastructure.Filter;
+namespace OsuManiaToolbox.Core;
 
 public class BeatmapData(DbBeatmap beatmap, List<Score> scores)
 {

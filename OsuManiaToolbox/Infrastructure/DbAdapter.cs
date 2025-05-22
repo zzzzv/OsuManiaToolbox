@@ -2,7 +2,7 @@
 using OsuParsers.Database.Objects;
 using OsuParsers.Decoders;
 
-namespace OsuManiaToolbox.Infrastructure;
+namespace OsuManiaToolbox.Core;
 
 public interface IDbAdapter<TDatabase, TItem> where TDatabase : class
 {

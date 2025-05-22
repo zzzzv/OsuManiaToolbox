@@ -1,7 +1,7 @@
 ﻿using System.Collections.Concurrent;
 using OsuManiaToolbox.Core.Services;
 
-namespace OsuManiaToolbox.Infrastructure.Services;
+namespace OsuManiaToolbox.Core.Services;
 
 public class LogService : ILogService
 {

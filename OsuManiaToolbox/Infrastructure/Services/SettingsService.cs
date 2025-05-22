@@ -4,7 +4,7 @@ using System.IO;
 using System.Reflection;
 using System.Text.Json;
 
-namespace OsuManiaToolbox.Infrastructure.Services;
+namespace OsuManiaToolbox.Core.Services;
 
 public class SettingsService : ISettingsService
 {

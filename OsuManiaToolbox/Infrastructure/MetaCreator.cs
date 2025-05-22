@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Documents;
 
-namespace OsuManiaToolbox.Infrastructure;
+namespace OsuManiaToolbox.Core;
 
 public class MetaCreator
 {

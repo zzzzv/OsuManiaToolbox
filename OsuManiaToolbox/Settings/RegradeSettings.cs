@@ -22,17 +22,17 @@ public partial class ModGradeStrategyIndex(Mods mod) : ObservableObject
 public partial class RegradeSettings : ObservableObject
 {
     public ObservableCollection<GradeThreshold> GradeThresholds { get; set; } = [
-        new GradeThreshold(Grade.S, 99),
-        new GradeThreshold(Grade.A, 98),
-        new GradeThreshold(Grade.B, 96),
-        new GradeThreshold(Grade.C, 93),
-        new GradeThreshold(Grade.D, 88),
+        new(Grade.S, 99),
+        new(Grade.A, 98),
+        new(Grade.B, 96),
+        new(Grade.C, 93),
+        new(Grade.D, 88),
     ];
 
     public ObservableCollection<ModGradeStrategyIndex> ModGradeStrategyIndexes { get; set; } = [
-        new ModGradeStrategyIndex(Mods.NoFail),
-        new ModGradeStrategyIndex(Mods.Easy),
-        new ModGradeStrategyIndex(Mods.HalfTime),
+        new(Mods.NoFail),
+        new(Mods.Easy),
+        new(Mods.HalfTime),
     ];
 
     public GradeStrategy GetGradeStrategy(Mods mods)

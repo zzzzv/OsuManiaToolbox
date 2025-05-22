@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using OsuManiaToolbox.Core;
 using OsuManiaToolbox.Core.Services;
 using OsuManiaToolbox.Settings;
 using OsuParsers.Database.Objects;
@@ -15,8 +16,11 @@ public partial class FilterView : ObservableObject
     private readonly IBeatmapFilterService _filterService;
     private readonly IExportService _exportService;
 
+    private readonly TableCreator _tableCreator = new();
+
     public IRelayCommand CreateItem { get; }
     public IRelayCommand DeleteItem { get; }
+    public IRelayCommand FilterCommand { get; }
     public IRelayCommand CreateCollection { get; }
     public IRelayCommand WriteCsv { get; }
 
@@ -27,6 +31,12 @@ public partial class FilterView : ObservableObject
 
     [ObservableProperty]
     private FilterHistoryItem _selected;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(Table))]
+    private BeatmapData[] _data = [];
+
+    public DataView Table => _tableCreator.Create(Data).DefaultView;
 
     public FilterView(ISettingsService settingsService, IBeatmapDbService beatmapDb, ILogService logService,
         IBeatmapFilterService filterService, IExportService exportService)
@@ -46,6 +56,7 @@ public partial class FilterView : ObservableObject
 
         CreateItem = new RelayCommand(CreateItemRun);
         DeleteItem = new RelayCommand(DeleteItemRun, CanDeleteItem);
+        FilterCommand = new RelayCommand(FilterRun);
         CreateCollection = new RelayCommand(CreateCollectionRun);
         WriteCsv = new RelayCommand(WriteCsvRun);
     }
@@ -83,12 +94,26 @@ public partial class FilterView : ObservableObject
         return Selected != null && Settings.History.Count > 1;
     }
 
+    private void FilterRun()
+    {
+        var mania = _beatmapDb.Items.Where(x => x.Ruleset == Ruleset.Mania).ToArray();
+        _logger.Info($"共有{mania.Length}张Mania谱面");
+        var result = _filterService.Filter(mania, Selected.Expression, Selected.OrderBy).Skip(Selected.Skip);
+        if (Selected.Take > 0)
+        {
+            result = result.Take(Selected.Take);
+        }
+        var arr = result.ToArray();
+        _logger.Info($"符合条件的谱面有{arr.Length}张");
+        Selected = Settings.MoveFirst(Selected);
+        Data = arr;
+    }
+
     private void CreateCollectionRun()
     {
         try
         {
-            var result = Filter();
-            var success = _exportService.CreateCollection(result, Selected.CollectionName);
+            var success = _exportService.CreateCollection(Data.Select(p => p.Bm.MD5Hash), Selected.CollectionName);
             if (success)
             {
                 Selected = Settings.MoveFirst(Selected);
@@ -104,8 +129,7 @@ public partial class FilterView : ObservableObject
     {
         try
         {
-            var result = Filter();
-            var success = _exportService.ExportToCsv(result, Selected.CsvName);
+            var success = _exportService.ExportToCsv(Data, Selected.CsvName, _tableCreator);
             if (success)
             {
                 Selected = Settings.MoveFirst(Selected);
@@ -115,21 +139,6 @@ public partial class FilterView : ObservableObject
         {
             _logger.Exception(ex);
         }
-    }
-
-    private DbBeatmap[] Filter()
-    {
-        var beatmaps = _beatmapDb.Items.Where(x => x.Ruleset == Ruleset.Mania).ToArray();
-        _logger.Info($"共有{beatmaps.Length}张Mania谱面");
-        var result = _filterService.Filter(Selected.Expression, beatmaps, Selected.OrderBy).Skip(Selected.Skip);
-        if (Selected.Take != null)
-        {
-            result = result.Take(Selected.Take.Value);
-        }
-        var arr = result.ToArray();
-        _logger.Info($"符合条件的谱面有{arr.Length}张");
-        Selected = Settings.MoveFirst(Selected);
-        return arr;
     }
 
     private static string GetPropertyNames<T>()

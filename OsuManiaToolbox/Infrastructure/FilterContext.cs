@@ -1,18 +1,19 @@
 using OsuManiaToolbox.Core.Services;
-using OsuManiaToolbox.Infrastructure.Filter;
 using OsuParsers.Database.Objects;
 using OsuParsers.Enums;
 using OsuParsers.Enums.Database;
 using System.ComponentModel;
 using System.Data;
 
-namespace OsuManiaToolbox.Infrastructure;
+namespace OsuManiaToolbox.Core;
 
 public class FilterContext : BeatmapData
 {
     public FilterContext(DbBeatmap bm, List<Score> scores) : base(bm, scores) { }
 
     public FilterContext(DbBeatmap bm, IScoreDbService scoreDb) : base(bm, scoreDb) { }
+
+    public FilterContext(BeatmapData bm) : base(bm.Bm, bm.Scores.List) { }
 
     public Mods HT => Mods.HalfTime;
     public Mods DT => Mods.DoubleTime;

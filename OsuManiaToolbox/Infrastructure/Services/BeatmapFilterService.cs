@@ -1,10 +1,9 @@
 using DynamicExpresso;
-using OsuManiaToolbox.Core.Services;
 using OsuParsers.Database.Objects;
 using System.Data;
 using System.Text.RegularExpressions;
 
-namespace OsuManiaToolbox.Infrastructure.Services;
+namespace OsuManiaToolbox.Core.Services;
 
 public partial class BeatmapFilterService : IBeatmapFilterService
 {
@@ -22,19 +21,24 @@ public partial class BeatmapFilterService : IBeatmapFilterService
 
     public DataView MetaTable => FilterContext.MetaTable;
 
-    public IEnumerable<DbBeatmap> Filter(string expression, IEnumerable<DbBeatmap> beatmaps, string order)
+    public IEnumerable<BeatmapData> Filter(IEnumerable<DbBeatmap> beatmaps, string expression, string order)
+    {
+        return Filter(beatmaps.Select(p => new FilterContext(p, _scoreDb)), expression, order);
+    }
+
+    public IEnumerable<BeatmapData> Filter(IEnumerable<BeatmapData> beatmaps, string expression, string order)
     {
         expression = CheckExpression(expression);
         _logger.Info($"表达式为 {expression}");
         var interpreter = new Interpreter(InterpreterOptions.DefaultCaseInsensitive);
         var func = interpreter.ParseAsDelegate<FilterFunc>(expression, "this");
-        var result = beatmaps.Select(p => new FilterContext(p, _scoreDb)).Where(p => func(p));
+        var result = beatmaps.Select(p => p as FilterContext ?? new FilterContext(p)).Where(p => func(p));
         if (order != string.Empty)
         {
             var orderFunc = interpreter.ParseAsDelegate<OrderFunc>(order, "this");
             result = result.OrderBy(p => orderFunc(p));
         }
-        return result.Select(p => p.Bm);
+        return result;
     }
 
     private string CheckExpression(string expression)

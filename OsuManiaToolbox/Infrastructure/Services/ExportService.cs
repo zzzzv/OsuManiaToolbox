@@ -1,13 +1,13 @@
 using CsvHelper;
-using OsuManiaToolbox.Core.Services;
 using OsuParsers.Database.Objects;
 using OsuParsers.Enums;
+using System.Data;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Text;
 
-namespace OsuManiaToolbox.Infrastructure.Services;
+namespace OsuManiaToolbox.Core.Services;
 
 public class ExportService : IExportService
 {
@@ -22,7 +22,7 @@ public class ExportService : IExportService
         _logger = logService.GetLogger(this);
     }
 
-    public bool ExportToCsv(IEnumerable<DbBeatmap> beatmaps, string fileName)
+    public bool ExportToCsv(IEnumerable<BeatmapData> beatmaps, string fileName, TableCreator tableCreator)
     {
         try
         {
@@ -39,22 +39,28 @@ public class ExportService : IExportService
             }
             
             var file = fileName + ".csv";
-            int count = 0;
+            var table = tableCreator.Create(beatmaps);
             using (var stream = File.OpenWrite(file))
             using (var writer = new StreamWriter(stream, Encoding.UTF8))
             using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
             {
-                csv.WriteHeader<CsvData>();
-                csv.NextRecord();
-                foreach (var beatmap in beatmaps)
+                foreach (DataColumn column in table.Columns)
                 {
-                    csv.WriteRecord(new CsvData(beatmap, _scoreDb));
-                    count++;
+                    csv.WriteField(column.ColumnName);
+                }
+                csv.NextRecord();
+
+                foreach (DataRow row in table.Rows)
+                {
+                    for (int i = 0; i < table.Columns.Count; i++)
+                    {
+                        csv.WriteField(row[i]);
+                    }
                     csv.NextRecord();
                 }
             }
             
-            _logger.Info($"已导出 {count} 行谱面信息到 {file}");
+            _logger.Info($"已导出 {table.Rows.Count} 行谱面信息到 {file}");
 
             var absolutePath = Path.GetFullPath(file);
             var process = new Process();
@@ -71,7 +77,7 @@ public class ExportService : IExportService
         }
     }
 
-    public bool CreateCollection(IEnumerable<DbBeatmap> beatmaps, string collectionName)
+    public bool CreateCollection(IEnumerable<string> beatmapsMd5, string collectionName)
     {
         try
         {
@@ -81,7 +87,7 @@ public class ExportService : IExportService
                 return false;
             }
             
-            if (!beatmaps.Any())
+            if (!beatmapsMd5.Any())
             {
                 _logger.Info("没有符合条件的谱面");
                 return false;
@@ -91,7 +97,7 @@ public class ExportService : IExportService
             {
                 Name = collectionName,
             };
-            collection.MD5Hashes.AddRange(beatmaps.Select(x => x.MD5Hash));
+            collection.MD5Hashes.AddRange(beatmapsMd5);
             collection.Count = collection.MD5Hashes.Count;
 
             if (_collectionDb.Index.ContainsKey(collection.Name))
@@ -112,38 +118,4 @@ public class ExportService : IExportService
             return false;
         }
     }
-}
-
-public class CsvData
-{
-    private readonly DbBeatmap _bm;
-    private readonly List<Score> _scores;
-    private readonly Score? _maxAccScore;
-    private readonly Score? _lastScore;
-
-    public CsvData(DbBeatmap bm, IScoreDbService scoreDb)
-    {
-        _bm = bm;
-        _scores = scoreDb.Index.TryGetValue(_bm.MD5Hash, out var scores) ? scores : [];
-        _maxAccScore = _scores.OrderByDescending(x => x.ManiaAcc()).FirstOrDefault();
-        _lastScore = _scores.OrderByDescending(x => x.ScoreTimestamp).FirstOrDefault();
-    }
-
-    public string Title => _bm.TitleUnicode;
-    public string Artist => _bm.ArtistUnicode;
-    public string Difficulty => _bm.Difficulty;
-    public string XXY_SR => _bm.ManiaStarRating[Mods.None].ToString("F4");
-    public string SR => _bm.ManiaStarRating[Mods.HardRock].ToString("F4");
-    public int Key => (int)_bm.CircleSize;
-    public string OD => _bm.OverallDifficulty.ToString("F1");
-    public string HP => _bm.HPDrain.ToString("F1");
-    public string LNRate => ((double)_bm.SlidersCount * 100 / (_bm.SlidersCount + _bm.CirclesCount)).ToString("F1");
-    public int ScoreCount => _scores.Count;
-    public string MaxAcc => _maxAccScore?.ManiaAcc().ToString("F2") ?? string.Empty;
-    public string MaxAccMod => _maxAccScore?.Mods.Acronyms() ?? string.Empty;
-    public string MaxAccTime => _maxAccScore?.ScoreTimestamp.ToString("g") ?? string.Empty;
-    public string LastAcc => _lastScore?.ManiaAcc().ToString("F2") ?? string.Empty;
-    public string LastAccMod => _lastScore?.Mods.Acronyms() ?? string.Empty;
-    public string LastAccTime => _lastScore?.ScoreTimestamp.ToString("g") ?? string.Empty;
-    public string Link => $"https://osu.ppy.sh/beatmapsets/{_bm.BeatmapSetId}#mania/{_bm.BeatmapId}";
 }

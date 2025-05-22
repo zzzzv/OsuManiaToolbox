@@ -6,6 +6,7 @@ using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Media;
 using System.Windows.Threading;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace OsuManiaToolbox;
 
@@ -13,6 +14,7 @@ public partial class MainWindow : Window
 {
     private readonly ILogDispatcher _logDispatcher;
     private readonly ISettingsService _settingsService;
+    private readonly IWindowService _windowService;
 
     public CommonSettings Settings => _settingsService.GetSettings<CommonSettings>();
     public RegradeView Regrade { get; }
@@ -22,6 +24,7 @@ public partial class MainWindow : Window
     public MainWindow(
         ILogService logService,
         ISettingsService settingsService,
+        IWindowService windowService,
         RegradeView regradeView,
         StarRatingView starRatingView,
         FilterView filterView)
@@ -30,6 +33,7 @@ public partial class MainWindow : Window
 
         _logDispatcher = logService.LogDispatcher;
         _settingsService = settingsService;
+        _windowService = windowService;
         Regrade = regradeView;
         StarRating = starRatingView;
         Filter = filterView;
@@ -50,6 +54,7 @@ public partial class MainWindow : Window
     {
         _settingsService.Save();
         _logDispatcher.LogsReceived -= AppendLog;
+        _windowService.CloseAllWindows();
     }
 
     private void AppendLog(IEnumerable<LogMessage> logs)
@@ -89,5 +94,10 @@ public partial class MainWindow : Window
             logTextBox.EndChange();
             logTextBox.ScrollToEnd();
         }, DispatcherPriority.Background);
+    }
+
+    private void CreateBeatmapWindow_Click(object sender, RoutedEventArgs e)
+    {
+        _windowService.ShowBeatmapWindow();
     }
 }

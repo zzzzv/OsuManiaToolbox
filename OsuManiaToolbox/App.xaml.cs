@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using OsuManiaToolbox.Infrastructure.Services;
 using OsuManiaToolbox.Core.Services;
 using OsuManiaToolbox.ViewModels;
 using System.Windows;
@@ -32,11 +31,13 @@ public partial class App : Application
         services.AddSingleton<ICollectionDbService, CollectionDbService>();
         services.AddSingleton<IExportService, ExportService>();
         services.AddSingleton<IBeatmapFilterService, BeatmapFilterService>();
+        services.AddSingleton<IWindowService, WindowService>();
 
         services.AddSingleton<RegradeView>();
         services.AddSingleton<StarRatingView>();
         services.AddSingleton<FilterView>();
 
+        services.AddTransient<BeatmapWindow>();
         services.AddTransient<MainWindow>();
 
         return services.BuildServiceProvider();
@@ -49,6 +50,7 @@ public partial class App : Application
             base.OnStartup(e);
 
             var mainWindow = Services.GetRequiredService<MainWindow>();
+            MainWindow = mainWindow;
             mainWindow.Show();
         }
         catch (Exception ex)
