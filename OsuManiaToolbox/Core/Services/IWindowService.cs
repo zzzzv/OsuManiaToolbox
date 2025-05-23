@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
 namespace OsuManiaToolbox.Core.Services;
 
 public interface IWindowService

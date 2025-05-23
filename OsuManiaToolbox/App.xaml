@@ -26,6 +26,11 @@
       <Setter Property="VerticalContentAlignment" Value="Center"/>
     </Style>
 
+    <Style TargetType="{x:Type Control}">
+      <Setter Property="ToolTipService.InitialShowDelay" Value="200"/>
+      <Setter Property="ToolTipService.BetweenShowDelay" Value="1000"/>
+    </Style>
+
     <converters:EnumToStringConverter x:Key="EnumToStringConverter"/>
   </Application.Resources>
 </Application>

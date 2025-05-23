@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using OsuManiaToolbox.Core.Services;
+using OsuManiaToolbox.Infrastructure.Services;
 using OsuManiaToolbox.ViewModels;
 using System.Windows;
 
@@ -7,7 +8,6 @@ namespace OsuManiaToolbox;
 
 public partial class App : Application
 {
-    public static new App Current => (App)Application.Current;
     public IServiceProvider Services { get; }
     public App()
     {
@@ -48,6 +48,15 @@ public partial class App : Application
         try
         {
             base.OnStartup(e);
+            try
+            {
+                Services.GetRequiredService<ISettingsService>().Load();
+            }
+            catch (Exception ex)
+            {
+                var logger = Services.GetRequiredService<ILogService>().GetLogger(this);
+                logger.Warning($"加载设置失败: {ex.Message}, 使用默认设置");
+            }
 
             var mainWindow = Services.GetRequiredService<MainWindow>();
             MainWindow = mainWindow;

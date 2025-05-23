@@ -1,22 +1,14 @@
 using Microsoft.Extensions.DependencyInjection;
 using OsuManiaToolbox.Core.Services;
-using System.Collections.Generic;
-using System.Linq;
-using System.Windows;
 
-namespace OsuManiaToolbox.Core.Services;
+namespace OsuManiaToolbox.Infrastructure.Services;
 
-public class WindowService : IWindowService
+public class WindowService(IServiceProvider serviceProvider) : IWindowService
 {
-    private readonly IServiceProvider _serviceProvider;
-    private readonly List<BeatmapWindow> _openWindows = new List<BeatmapWindow>();
+    private readonly IServiceProvider _serviceProvider = serviceProvider;
+    private readonly List<BeatmapWindow> _openWindows = [];
 
     public IReadOnlyCollection<BeatmapWindow> OpenWindows => _openWindows.AsReadOnly();
-
-    public WindowService(IServiceProvider serviceProvider)
-    {
-        _serviceProvider = serviceProvider;
-    }
 
     public void ShowBeatmapWindow()
     {

@@ -1,5 +1,4 @@
 ﻿using OsuParsers.Database.Objects;
-using System.Diagnostics.CodeAnalysis;
 
 namespace OsuManiaToolbox.Core.Services;
 

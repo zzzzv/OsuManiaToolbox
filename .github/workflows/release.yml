@@ -6,6 +6,9 @@ name: .NET
 on:
   workflow_dispatch:
 
+env:
+  PROJECT_NAME: OsuManiaToolbox
+
 jobs:
   build:
     runs-on: windows-latest
@@ -35,7 +38,7 @@ jobs:
       id: extract_version
       shell: pwsh
       run: |
-        $content = Get-Content -Path "./OsuManiaToolbox/OsuManiaToolbox.csproj" -Raw
+        $content = Get-Content -Path "./${{ env.PROJECT_NAME }}/${{ env.PROJECT_NAME }}.csproj" -Raw
         if ($content -match "<Version>([^<]+)</Version>") {
           $version = $matches[1]
           echo "version=$version" >> $env:GITHUB_OUTPUT
@@ -58,4 +61,4 @@ jobs:
       uses: softprops/action-gh-release@v2
       with:
         tag_name: ${{ steps.extract_version.outputs.version }}
-        files: ./OsuManiaToolbox/bin/publish/OsuManiaToolbox.exe
+        files: ./${{ env.PROJECT_NAME }}/bin/publish/${{ env.PROJECT_NAME }}_v*.exe

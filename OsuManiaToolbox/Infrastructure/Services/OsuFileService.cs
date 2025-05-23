@@ -3,7 +3,7 @@ using OsuManiaToolbox.Core.Services;
 using OsuManiaToolbox.Settings;
 using OsuParsers.Database.Objects;
 
-namespace OsuManiaToolbox.Core.Services;
+namespace OsuManiaToolbox.Infrastructure.Services;
 
 public class OsuFileService(ISettingsService settingsService) : IOsuFileService
 {

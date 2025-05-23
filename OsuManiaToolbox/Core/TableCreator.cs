@@ -7,8 +7,6 @@ public class BeatmapColumn(string name, Func<BeatmapData, string> func)
 {
     public string Name { get; } = name;
     public Func<BeatmapData, string> Func { get; } = func;
-    public string Description { get; set; } = string.Empty;
-    public bool Show { get; set; } = true;
 }
 
 public class TableCreator
@@ -37,11 +35,13 @@ public class TableCreator
             new("LastModify", x => x.Bm.LastModifiedTime.ToString("g")),
             new("MaxAcc", x => x.Scores.AccMax?.ManiaAcc().ToString("F2") ?? string.Empty),
             new("MaxAccTime", x => x.Scores.AccMax?.ScoreTimestamp.ToString("g") ?? string.Empty),
+            new("MaxAccMods", x => x.Scores.AccMax?.Mods.Acronyms() ?? string.Empty),
             new("MaxScore", x => x.Scores.ScoreMax?.ReplayScore.ToString("N0") ?? string.Empty),
             new("MaxScoreTime", x => x.Scores.ScoreMax?.ScoreTimestamp.ToString("g") ?? string.Empty),
             new("LastAcc", x => x.Scores.Last?.ManiaAcc().ToString("F2") ?? string.Empty),
             new("LastScore", x => x.Scores.Last?.ReplayScore.ToString("N0") ?? string.Empty),
             new("LastTime", x => x.Scores.Last?.ScoreTimestamp.ToString("g") ?? string.Empty),
+            new("LastMods", x => x.Scores.Last?.Mods.Acronyms() ?? string.Empty),
             new("ScoreCount", x => x.Scores.Count.ToString()),
             new("Link", x => $"https://osu.ppy.sh/beatmapsets/{x.Bm.BeatmapSetId}#mania/{x.Bm.BeatmapId}"),
         ];

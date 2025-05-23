@@ -1,9 +1,11 @@
 using DynamicExpresso;
 using OsuParsers.Database.Objects;
+using OsuManiaToolbox.Core.Services;
+using OsuManiaToolbox.Core;
 using System.Data;
 using System.Text.RegularExpressions;
 
-namespace OsuManiaToolbox.Core.Services;
+namespace OsuManiaToolbox.Infrastructure.Services;
 
 public partial class BeatmapFilterService : IBeatmapFilterService
 {

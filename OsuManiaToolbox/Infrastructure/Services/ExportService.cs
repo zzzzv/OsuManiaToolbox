@@ -1,23 +1,22 @@
 using CsvHelper;
+using OsuManiaToolbox.Core;
+using OsuManiaToolbox.Core.Services;
 using OsuParsers.Database.Objects;
-using OsuParsers.Enums;
 using System.Data;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Text;
 
-namespace OsuManiaToolbox.Core.Services;
+namespace OsuManiaToolbox.Infrastructure.Services;
 
 public class ExportService : IExportService
 {
-    private readonly IScoreDbService _scoreDb;
     private readonly ICollectionDbService _collectionDb;
     private readonly ILogger _logger;
 
-    public ExportService(IScoreDbService scoreDb, ICollectionDbService collectionDb, ILogService logService)
+    public ExportService(ICollectionDbService collectionDb, ILogService logService)
     {
-        _scoreDb = scoreDb;
         _collectionDb = collectionDb;
         _logger = logService.GetLogger(this);
     }
@@ -39,6 +38,12 @@ public class ExportService : IExportService
             }
             
             var file = fileName + ".csv";
+            if (File.Exists(file))
+            {
+                _logger.Warning($"文件 {file} 已存在，自动覆盖");
+                File.Delete(file);
+            }
+
             var table = tableCreator.Create(beatmaps);
             using (var stream = File.OpenWrite(file))
             using (var writer = new StreamWriter(stream, Encoding.UTF8))

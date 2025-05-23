@@ -17,16 +17,20 @@
           <StackPanel Orientation="Horizontal">
             <Button Content="新建" DockPanel.Dock="Right" Command="{Binding Filter.CreateItem}"/>
             <Button Content="删除" DockPanel.Dock="Right" Command="{Binding Filter.DeleteItem}"/>
-            <TextBlock Text="过滤条件"/>
-            <ComboBox ItemsSource="{Binding Filter.Settings.History}" 
-                    SelectedItem="{Binding Filter.Selected}"
-                    DisplayMemberPath="Expression"
-                    MinWidth="200"
-                    IsEditable="True"
-                    IsTextSearchEnabled="False"
-                    Text="{Binding Filter.Selected.Expression, UpdateSourceTrigger=PropertyChanged}"/>
-            <TextBlock Text="排序" ToolTip="负号逆序，只为Skip和Take用，和表格排序无关"/>
-            <TextBox Text="{Binding Filter.Selected.OrderBy}" MinWidth="50" ToolTip="负号逆序，只为Skip和Take用，和表格排序无关"/>
+            <StackPanel Orientation="Horizontal" ToolTip="谱面筛选无视大小写，字符串加双引号">
+              <TextBlock Text="过滤条件"/>
+              <ComboBox ItemsSource="{Binding Filter.Settings.History}" 
+                        SelectedItem="{Binding Filter.Selected}"
+                        DisplayMemberPath="Expression"
+                        MinWidth="200"
+                        IsEditable="True"
+                        IsTextSearchEnabled="False"
+                        Text="{Binding Filter.Selected.Expression, UpdateSourceTrigger=PropertyChanged}"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" ToolTip="负号逆序，只为Skip和Take用，和表格排序无关">
+              <TextBlock Text="排序"/>
+              <TextBox Text="{Binding Filter.Selected.OrderBy}" MinWidth="50"/>
+            </StackPanel>
             <TextBlock Text="Skip"/>
             <TextBox Text="{Binding Filter.Selected.Skip}" MinWidth="20"/>
             <TextBlock Text="Take"/>
@@ -64,16 +68,15 @@
         </Border>
       </DockPanel>
       <DockPanel>
-        <Expander ExpandDirection="Right" >
+        <Expander ExpandDirection="Right">
           <Expander.HeaderTemplate>
             <DataTemplate>
-              <TextBlock TextWrapping="Wrap" Width="12" Text="过滤器说明"/>
+              <TextBlock TextWrapping="Wrap" Width="12" Text="字段说明"/>
             </DataTemplate>
           </Expander.HeaderTemplate>
           <ScrollViewer>
-            <StackPanel>
-              <TextBlock Text="谱面筛选无视大小写，字符串加双引号" TextWrapping="Wrap"/>
-              <DataGrid ItemsSource="{Binding Filter.MetaTable}"
+            <StackPanel MinWidth="200" MaxWidth="500">
+              <DataGrid ItemsSource="{Binding Filter.MetaTable,Mode=OneTime}"
                         AutoGenerateColumns="True"
                         IsReadOnly="True"
                         CanUserResizeColumns="False"

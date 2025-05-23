@@ -1,3 +1,4 @@
+using OsuManiaToolbox.Core;
 using OsuManiaToolbox.Core.Services;
 using OsuParsers.Database.Objects;
 using OsuParsers.Enums;
@@ -5,7 +6,7 @@ using OsuParsers.Enums.Database;
 using System.ComponentModel;
 using System.Data;
 
-namespace OsuManiaToolbox.Core;
+namespace OsuManiaToolbox.Infrastructure;
 
 public class FilterContext : BeatmapData
 {
@@ -48,6 +49,9 @@ public class FilterContext : BeatmapData
     [Description("最高Acc至今天数")]
     public double AccDays => (DateTime.Now - Scores.AccMax?.ScoreTimestamp)?.Days ?? double.NaN;
 
+    [Description("最高Acc Mods")]
+    public Mods AccMods => Scores.AccMax?.Mods ?? Mods.None;
+
     [Description("最高分数")]
     public double Score => Scores.ScoreMax?.ReplayScore ?? double.NaN;
 
@@ -62,6 +66,9 @@ public class FilterContext : BeatmapData
 
     [Description("最新成绩至今天数")]
     public double LastDays => (DateTime.Now - Scores.Last?.ScoreTimestamp)?.Days ?? double.NaN;
+
+    [Description("最新成绩Mods")]
+    public Mods LastMods => Scores.Last?.Mods ?? Mods.None;
 
     [Description("参数可用值: HT, DT, EZ, HR。支持&运算符")]
     public double SR(Mods mod = Mods.None)
