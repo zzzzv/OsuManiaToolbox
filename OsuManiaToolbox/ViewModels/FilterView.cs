@@ -15,8 +15,7 @@ public partial class FilterView : ObservableObject
     private readonly ILogger _logger;
     private readonly IBeatmapFilterService _filterService;
     private readonly IExportService _exportService;
-
-    private readonly TableCreator _tableCreator = new();
+    private readonly ITableService _tableService;
 
     public IRelayCommand CreateItem { get; }
     public IRelayCommand DeleteItem { get; }
@@ -36,10 +35,10 @@ public partial class FilterView : ObservableObject
     [NotifyPropertyChangedFor(nameof(Table))]
     private BeatmapData[] _data = [];
 
-    public DataView Table => _tableCreator.Create(Data).DefaultView;
+    public DataView Table => _tableService.Create(Data).DefaultView;
 
     public FilterView(ISettingsService settingsService, IBeatmapDbService beatmapDb, ILogService logService,
-        IBeatmapFilterService filterService, IExportService exportService)
+        IBeatmapFilterService filterService, IExportService exportService, ITableService tableService)
     {
         Settings = settingsService.GetSettings<FilterSettings>();
         _beatmapDb = beatmapDb;
@@ -47,6 +46,7 @@ public partial class FilterView : ObservableObject
         _filterService = filterService;
         MetaTable = _filterService.MetaTable;
         _exportService = exportService;
+        _tableService = tableService;
 
         if (!Settings.History.Any())
         {
@@ -129,7 +129,7 @@ public partial class FilterView : ObservableObject
     {
         try
         {
-            var success = _exportService.ExportToCsv(Data, Selected.CsvName, _tableCreator);
+            var success = _exportService.ExportToCsv(Data, Selected.CsvName);
             if (success)
             {
                 Selected = Settings.MoveFirst(Selected);

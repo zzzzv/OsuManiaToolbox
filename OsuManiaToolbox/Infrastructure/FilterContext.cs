@@ -70,7 +70,7 @@ public class FilterContext : BeatmapData
     [Description("最新成绩Mods")]
     public Mods LastMods => Scores.Last?.Mods ?? Mods.None;
 
-    [Description("参数可用值: HT, DT, EZ, HR。支持&运算符")]
+    [Description("参数可用值: HT, DT, EZ, HR。支持|(按位或)运算符")]
     public double SR(Mods mod = Mods.None)
     {
         return Bm.ManiaStarRating[mod];

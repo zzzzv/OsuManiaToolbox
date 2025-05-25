@@ -97,13 +97,15 @@
         </Expander>
       </DockPanel>
       <DataGrid ItemsSource="{Binding Filter.Table}"
-                  IsReadOnly="True"
-                  CanUserResizeRows="False"
-                  FrozenColumnCount="1"
-                  VerticalScrollBarVisibility="Visible"
-                  HorizontalScrollBarVisibility="Visible"
-                  EnableColumnVirtualization="True"
-                  EnableRowVirtualization="True"/>
+                Name="BeatmapDataGrid"
+                AutoGenerateColumns="False"
+                IsReadOnly="True"
+                CanUserResizeRows="False"
+                FrozenColumnCount="1"
+                VerticalScrollBarVisibility="Visible"
+                HorizontalScrollBarVisibility="Visible"
+                EnableColumnVirtualization="True"
+                EnableRowVirtualization="True"/>
     </DockPanel>
   </Grid>
 </Window>

@@ -32,6 +32,7 @@ public partial class App : Application
         services.AddSingleton<IExportService, ExportService>();
         services.AddSingleton<IBeatmapFilterService, BeatmapFilterService>();
         services.AddSingleton<IWindowService, WindowService>();
+        services.AddSingleton<ITableService, TableService>();
 
         services.AddSingleton<RegradeView>();
         services.AddSingleton<StarRatingView>();

@@ -14,14 +14,16 @@ public class ExportService : IExportService
 {
     private readonly ICollectionDbService _collectionDb;
     private readonly ILogger _logger;
+    private readonly ITableService _tableService;
 
-    public ExportService(ICollectionDbService collectionDb, ILogService logService)
+    public ExportService(ICollectionDbService collectionDb, ILogService logService, ITableService tableService)
     {
         _collectionDb = collectionDb;
         _logger = logService.GetLogger(this);
+        _tableService = tableService;
     }
 
-    public bool ExportToCsv(IEnumerable<BeatmapData> beatmaps, string fileName, TableCreator tableCreator)
+    public bool ExportToCsv(IEnumerable<BeatmapData> beatmaps, string fileName)
     {
         try
         {
@@ -44,7 +46,7 @@ public class ExportService : IExportService
                 File.Delete(file);
             }
 
-            var table = tableCreator.Create(beatmaps);
+            var table = _tableService.Create(beatmaps);
             using (var stream = File.OpenWrite(file))
             using (var writer = new StreamWriter(stream, Encoding.UTF8))
             using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))

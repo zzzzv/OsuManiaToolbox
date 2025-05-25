@@ -15,13 +15,13 @@ public record LogMessage(string Source, string Message, LogLevel Level)
 
 public interface ILogger
 {
-    public string Category { get; }
-    public void Log(string message, LogLevel level = LogLevel.Info);
-    public void Debug(string message) => Log(message, LogLevel.Debug);
-    public void Info(string message) => Log(message, LogLevel.Info);
-    public void Warning(string message) => Log(message, LogLevel.Warning);
-    public void Error(string message) => Log(message, LogLevel.Error);
-    public void Exception(Exception ex)
+    string Category { get; }
+    void Log(string message, LogLevel level = LogLevel.Info);
+    void Debug(string message) => Log(message, LogLevel.Debug);
+    void Info(string message) => Log(message, LogLevel.Info);
+    void Warning(string message) => Log(message, LogLevel.Warning);
+    void Error(string message) => Log(message, LogLevel.Error);
+    void Exception(Exception ex)
     {
         Error($"{ex.GetType().Name}: {ex.Message}");
         if (ex.StackTrace != null)
