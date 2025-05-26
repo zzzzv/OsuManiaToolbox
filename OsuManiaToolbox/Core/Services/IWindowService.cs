@@ -4,5 +4,5 @@ public interface IWindowService
 {
     void ShowBeatmapWindow();
     void CloseAllWindows();
-    IReadOnlyCollection<BeatmapWindow> OpenWindows { get; }
+    int NextWindowId { get; }
 }

@@ -36,7 +36,7 @@ public partial class App : Application
 
         services.AddSingleton<RegradeView>();
         services.AddSingleton<StarRatingView>();
-        services.AddSingleton<FilterView>();
+        services.AddTransient<FilterView>();
 
         services.AddTransient<BeatmapWindow>();
         services.AddTransient<MainWindow>();

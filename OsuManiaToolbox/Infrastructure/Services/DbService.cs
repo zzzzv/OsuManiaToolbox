@@ -20,20 +20,23 @@ public abstract class DbService<TDatabase, TItem> : IDbService<TItem> where TDat
         _filePath = filePath;
         _settings = settings;
         _logger = logger;
-        _db = new Lazy<TDatabase>(() => _adapter.Load(_filePath), LazyThreadSafetyMode.ExecutionAndPublication);
-        _index = new Lazy<Dictionary<string, TItem>>(() => _adapter.CreateIndex(_db.Value), LazyThreadSafetyMode.ExecutionAndPublication);
+        _db = new Lazy<TDatabase>(Load, LazyThreadSafetyMode.ExecutionAndPublication);
+        _index = new Lazy<Dictionary<string, TItem>>(CreateIndex, LazyThreadSafetyMode.ExecutionAndPublication);
     }
 
     public IReadOnlyList<TItem> Items => _adapter.GetList(_db.Value);
     public IReadOnlyDictionary<string, TItem> Index => _index.Value;
+
     public virtual void Add(TItem item)
     {
         throw new NotImplementedException($"{GetType().Name} 不支持添加");
     }
+
     public virtual void Remove(string key)
     {
         throw new NotImplementedException($"{GetType().Name} 不支持删除");
     }
+
     public void Save()
     {
         _logger.Debug($"开始保存数据库: {_filePath}");
@@ -45,6 +48,14 @@ public abstract class DbService<TDatabase, TItem> : IDbService<TItem> where TDat
         _adapter.Save(_db.Value, _filePath);
         _logger.Debug($"数据库保存完成: {_filePath}");
     }
+
+    public void Reload()
+    {
+        _logger.Info($"刷新数据库缓存: {_filePath}");
+        _db = new Lazy<TDatabase>(Load, LazyThreadSafetyMode.ExecutionAndPublication);
+        _index = new Lazy<Dictionary<string, TItem>>(CreateIndex, LazyThreadSafetyMode.ExecutionAndPublication);
+    }
+
     protected TDatabase Load()
     {
         _logger.Debug($"开始加载数据库: {_filePath}");
@@ -52,6 +63,7 @@ public abstract class DbService<TDatabase, TItem> : IDbService<TItem> where TDat
         _logger.Debug($"数据库加载完成: {_filePath}");
         return db;
     }
+
     protected Dictionary<string, TItem> CreateIndex()
     {
         _logger.Debug($"开始重建索引: {_filePath}");

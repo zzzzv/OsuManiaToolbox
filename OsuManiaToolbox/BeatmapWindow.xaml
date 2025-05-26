@@ -6,97 +6,99 @@
         xmlns:local="clr-namespace:OsuManiaToolbox"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance Type=local:BeatmapWindow, IsDesignTimeCreatable=False}"
-        Title="BeatmapWindow" Height="600" Width="1200">
+        Title="BeatmapWindow" Height="600" Width="1200" Closed="Window_Closed">
   <Window.InputBindings>
     <KeyBinding Key="Return" Command="{Binding Filter.FilterCommand}"/>
   </Window.InputBindings>
-  <Grid>
-    <DockPanel>
-      <DockPanel DockPanel.Dock="Top">
-        <Border Margin="1">
-          <StackPanel Orientation="Horizontal">
-            <Button Content="新建" DockPanel.Dock="Right" Command="{Binding Filter.CreateItem}"/>
-            <Button Content="删除" DockPanel.Dock="Right" Command="{Binding Filter.DeleteItem}"/>
-            <StackPanel Orientation="Horizontal" ToolTip="谱面筛选无视大小写，字符串加双引号">
-              <TextBlock Text="过滤条件"/>
-              <ComboBox ItemsSource="{Binding Filter.Settings.History}" 
+  <DockPanel>
+    <DockPanel DockPanel.Dock="Top">
+      <Border Margin="1">
+        <StackPanel Orientation="Horizontal">
+          <Button Content="新建" DockPanel.Dock="Right" Command="{Binding Filter.CreateItem}"/>
+          <Button Content="删除" DockPanel.Dock="Right" Command="{Binding Filter.DeleteItem}"/>
+          <StackPanel Orientation="Horizontal" ToolTip="谱面筛选无视大小写，字符串加双引号">
+            <TextBlock Text="过滤条件"/>
+            <ComboBox ItemsSource="{Binding Filter.Settings.History}" 
                         SelectedItem="{Binding Filter.Selected}"
                         DisplayMemberPath="Expression"
                         MinWidth="200"
                         IsEditable="True"
                         IsTextSearchEnabled="False"
                         Text="{Binding Filter.Selected.Expression, UpdateSourceTrigger=PropertyChanged}"/>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal" ToolTip="负号逆序，只为Skip和Take用，和表格排序无关">
-              <TextBlock Text="排序"/>
-              <TextBox Text="{Binding Filter.Selected.OrderBy}" MinWidth="50"/>
-            </StackPanel>
-            <TextBlock Text="Skip"/>
-            <TextBox Text="{Binding Filter.Selected.Skip}" MinWidth="20"/>
-            <TextBlock Text="Take"/>
-            <TextBox Text="{Binding Filter.Selected.Take}" MinWidth="20"/>
-            <Button Content="执行" Command="{Binding Filter.FilterCommand}"/>
           </StackPanel>
-        </Border>
-        <Border Margin="1" DockPanel.Dock="Right" HorizontalAlignment="Right">
-          <StackPanel Orientation="Horizontal">
-            <TextBlock Text="输出到"/>
-            <TabControl>
-              <TabControl.Template>
-                <ControlTemplate TargetType="TabControl">
-                  <StackPanel Orientation="Horizontal">
-                    <TabPanel IsItemsHost="True"/>
-                    <ContentPresenter ContentSource="SelectedContent"/>
-                  </StackPanel>
-                </ControlTemplate>
-              </TabControl.Template>
-              <TabItem Header="收藏夹">
-                <StackPanel Orientation="Horizontal">
-                  <TextBox Text="{Binding Filter.Selected.CollectionName}" MinWidth="50"/>
-                  <Button Content="生成" Command="{Binding Filter.CreateCollection}"/>
-                </StackPanel>
-              </TabItem>
-              <TabItem Header="CSV">
-                <StackPanel Orientation="Horizontal">
-                  <TextBox Text="{Binding Filter.Selected.CsvName}" MinWidth="50"/>
-                  <TextBlock Text=".csv" DockPanel.Dock="Right"/>
-                  <Button Content="写入" Command="{Binding Filter.WriteCsv}"/>
-                </StackPanel>
-              </TabItem>
-            </TabControl>
+          <StackPanel Orientation="Horizontal" ToolTip="负号逆序，只为Skip和Take用，和表格排序无关">
+            <TextBlock Text="排序"/>
+            <TextBox Text="{Binding Filter.Selected.OrderBy}" MinWidth="50"/>
           </StackPanel>
-        </Border>
-      </DockPanel>
-      <DockPanel>
-        <Expander ExpandDirection="Right">
-          <Expander.HeaderTemplate>
-            <DataTemplate>
-              <TextBlock TextWrapping="Wrap" Width="12" Text="字段说明"/>
-            </DataTemplate>
-          </Expander.HeaderTemplate>
-          <ScrollViewer>
-            <StackPanel MinWidth="200" MaxWidth="500">
-              <DataGrid ItemsSource="{Binding Filter.MetaTable,Mode=OneTime}"
+          <TextBlock Text="Skip"/>
+          <TextBox Text="{Binding Filter.Selected.Skip}" MinWidth="20"/>
+          <TextBlock Text="Take"/>
+          <TextBox Text="{Binding Filter.Selected.Take}" MinWidth="20"/>
+          <Button Content="执行" Command="{Binding Filter.FilterCommand}"/>
+        </StackPanel>
+      </Border>
+      <Border Margin="1" DockPanel.Dock="Right" HorizontalAlignment="Right">
+        <StackPanel Orientation="Horizontal">
+          <TextBlock Text="输出到"/>
+          <TabControl>
+            <TabControl.Template>
+              <ControlTemplate TargetType="TabControl">
+                <StackPanel Orientation="Horizontal">
+                  <TabPanel IsItemsHost="True"/>
+                  <ContentPresenter ContentSource="SelectedContent"/>
+                </StackPanel>
+              </ControlTemplate>
+            </TabControl.Template>
+            <TabItem Header="收藏夹">
+              <StackPanel Orientation="Horizontal">
+                <TextBox Text="{Binding Filter.Selected.CollectionName}" MinWidth="50"/>
+                <Button Content="生成" Command="{Binding Filter.CreateCollection}"/>
+              </StackPanel>
+            </TabItem>
+            <TabItem Header="CSV">
+              <StackPanel Orientation="Horizontal">
+                <TextBox Text="{Binding Filter.Selected.CsvName}" MinWidth="50"/>
+                <TextBlock Text=".csv" DockPanel.Dock="Right"/>
+                <Button Content="写入" Command="{Binding Filter.WriteCsv}"/>
+              </StackPanel>
+            </TabItem>
+          </TabControl>
+        </StackPanel>
+      </Border>
+    </DockPanel>
+    <StatusBar DockPanel.Dock="Bottom">
+      <StatusBarItem Content="{Binding Filter.CurrentLogMessage}"/>
+    </StatusBar>
+    <DockPanel>
+      <Expander ExpandDirection="Right">
+        <Expander.HeaderTemplate>
+          <DataTemplate>
+            <TextBlock TextWrapping="Wrap" Width="12" Text="字段说明"/>
+          </DataTemplate>
+        </Expander.HeaderTemplate>
+        <ScrollViewer>
+          <StackPanel MinWidth="200" MaxWidth="500">
+            <DataGrid ItemsSource="{Binding Filter.MetaTable,Mode=OneTime}"
                         AutoGenerateColumns="True"
                         IsReadOnly="True"
                         CanUserResizeColumns="False"
                         CanUserResizeRows="False"
                         GridLinesVisibility="Horizontal">
-                <DataGrid.HorizontalGridLinesBrush>
-                  <SolidColorBrush Color="Gainsboro"/>
-                </DataGrid.HorizontalGridLinesBrush>
-              </DataGrid>
-              <Expander Header="DbBeatmap字段">
-                <TextBlock Text="{Binding Filter.DbBeatmapProperties,Mode=OneTime}" TextWrapping="Wrap"/>
-              </Expander>
-              <Expander Header="Score字段">
-                <TextBlock Text="{Binding Filter.ScoreProperties,Mode=OneTime}" TextWrapping="Wrap"/>
-              </Expander>
-            </StackPanel>
-          </ScrollViewer>
-        </Expander>
-      </DockPanel>
-      <DataGrid ItemsSource="{Binding Filter.Table}"
+              <DataGrid.HorizontalGridLinesBrush>
+                <SolidColorBrush Color="Gainsboro"/>
+              </DataGrid.HorizontalGridLinesBrush>
+            </DataGrid>
+            <Expander Header="DbBeatmap字段">
+              <TextBlock Text="{Binding Filter.DbBeatmapProperties,Mode=OneTime}" TextWrapping="Wrap"/>
+            </Expander>
+            <Expander Header="Score字段">
+              <TextBlock Text="{Binding Filter.ScoreProperties,Mode=OneTime}" TextWrapping="Wrap"/>
+            </Expander>
+          </StackPanel>
+        </ScrollViewer>
+      </Expander>
+    </DockPanel>
+    <DataGrid ItemsSource="{Binding Filter.Table}"
                 Name="BeatmapDataGrid"
                 AutoGenerateColumns="False"
                 IsReadOnly="True"
@@ -106,6 +108,5 @@
                 HorizontalScrollBarVisibility="Visible"
                 EnableColumnVirtualization="True"
                 EnableRowVirtualization="True"/>
-    </DockPanel>
-  </Grid>
+  </DockPanel>
 </Window>

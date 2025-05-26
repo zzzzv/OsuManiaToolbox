@@ -7,8 +7,9 @@ public class WindowService(IServiceProvider serviceProvider) : IWindowService
 {
     private readonly IServiceProvider _serviceProvider = serviceProvider;
     private readonly List<BeatmapWindow> _openWindows = [];
+    private int _windowid = 0;
 
-    public IReadOnlyCollection<BeatmapWindow> OpenWindows => _openWindows.AsReadOnly();
+    public int NextWindowId => ++_windowid;
 
     public void ShowBeatmapWindow()
     {

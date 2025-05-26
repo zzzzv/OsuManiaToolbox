@@ -7,6 +7,7 @@ public interface IDbService<TItem>
     IReadOnlyList<TItem> Items { get; }
     IReadOnlyDictionary<string, TItem> Index { get; }
     void Save();
+    void Reload();
 }
 
 public interface IBeatmapDbService : IDbService<DbBeatmap>

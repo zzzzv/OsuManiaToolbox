@@ -9,10 +9,11 @@ using System.Data;
 
 namespace OsuManiaToolbox.ViewModels;
 
-public partial class FilterView : ObservableObject
+public partial class FilterView : ObservableObject, IDisposable
 {
     private readonly IBeatmapDbService _beatmapDb;
     private readonly ILogger _logger;
+    private readonly ILogDispatcher _logDispatcher;
     private readonly IBeatmapFilterService _filterService;
     private readonly IExportService _exportService;
     private readonly ITableService _tableService;
@@ -27,6 +28,7 @@ public partial class FilterView : ObservableObject
     public DataView MetaTable { get; }
     public string DbBeatmapProperties => GetPropertyNames<DbBeatmap>();
     public string ScoreProperties => GetPropertyNames<Score>();
+    public int WindowId { get; init; }
 
     [ObservableProperty]
     private FilterHistoryItem _selected;
@@ -35,14 +37,19 @@ public partial class FilterView : ObservableObject
     [NotifyPropertyChangedFor(nameof(Table))]
     private BeatmapData[] _data = [];
 
+    [ObservableProperty]
+    private string _currentLogMessage = string.Empty;
+
     public DataView Table => _tableService.Create(Data).DefaultView;
 
     public FilterView(ISettingsService settingsService, IBeatmapDbService beatmapDb, ILogService logService,
-        IBeatmapFilterService filterService, IExportService exportService, ITableService tableService)
+        IBeatmapFilterService filterService, IExportService exportService, ITableService tableService, IWindowService windowService)
     {
         Settings = settingsService.GetSettings<FilterSettings>();
         _beatmapDb = beatmapDb;
-        _logger = logService.GetLogger(this);
+        WindowId = windowService.NextWindowId;
+        _logger = logService.GetLogger($"{nameof(FilterView)}#{WindowId}");
+        _logDispatcher = logService.LogDispatcher;
         _filterService = filterService;
         MetaTable = _filterService.MetaTable;
         _exportService = exportService;
@@ -59,6 +66,13 @@ public partial class FilterView : ObservableObject
         FilterCommand = new RelayCommand(FilterRun);
         CreateCollection = new RelayCommand(CreateCollectionRun);
         WriteCsv = new RelayCommand(WriteCsvRun);
+
+        _logDispatcher.LogsReceived += HandleLogs;
+    }
+
+    public void Dispose()
+    {
+        _logDispatcher.LogsReceived -= HandleLogs;
     }
 
     private void CreateItemRun()
@@ -144,5 +158,16 @@ public partial class FilterView : ObservableObject
     private static string GetPropertyNames<T>()
     {
         return string.Join(", ", typeof(T).GetProperties().Select(p => p.Name));
+    }
+
+    private void HandleLogs(IEnumerable<LogMessage> logs)
+    {
+        var filteredLogs = logs.Where(log => 
+            log.Source == $"{nameof(FilterView)}#{WindowId}" && 
+            log.Level > LogLevel.Debug).ToArray();
+        if (filteredLogs.Length > 0)
+        {
+            CurrentLogMessage = filteredLogs.Last().ToString();
+        }
     }
 }
