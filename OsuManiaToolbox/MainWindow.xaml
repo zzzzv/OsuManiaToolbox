@@ -89,6 +89,7 @@
       <UniformGrid Rows="1">
         <Button Content="重新计算(几分钟)" Command="{Binding StarRating.RunCommand}"/>
         <Button Content="取消" Command="{Binding StarRating.CancelCommand}"/>
+        <Button Content="恢复原始SR" Command="{Binding StarRating.ResetCommand}"/>
       </UniformGrid>
       <Border />
       <DockPanel>

@@ -21,6 +21,7 @@ public partial class StarRatingView : ObservableObject
 
     public IRelayCommand RunCommand { get; }
     public IRelayCommand CancelCommand { get; }
+    public IRelayCommand ResetCommand { get; }
 
     public StarRatingSettings Settings { get; }
 
@@ -32,11 +33,24 @@ public partial class StarRatingView : ObservableObject
         _logger = logService.GetLogger(this);
         RunCommand = new AsyncRelayCommand(RunAsync, () => !IsRunning);
         CancelCommand = new RelayCommand(CancelOperation, () => IsRunning);
+        ResetCommand = new RelayCommand(Reset, () => !IsRunning);
     }
 
     private void CancelOperation()
     {
         _cancellationTokenSource?.Cancel();
+    }
+
+    public void Reset()
+    {
+        foreach (var bm in _beatmapDb.Items.Where(x => x.Ruleset == Ruleset.Mania))
+        {
+            bm.ManiaStarRating[Mods.None] = bm.ManiaStarRating[Mods.Easy];
+            bm.ManiaStarRating[Mods.HalfTime] = bm.ManiaStarRating[Mods.Easy | Mods.HalfTime];
+            bm.ManiaStarRating[Mods.DoubleTime] = bm.ManiaStarRating[Mods.Easy | Mods.DoubleTime];
+        }
+        _beatmapDb.Save();
+        _logger.Info("恢复原始SR");
     }
 
     private async Task RunAsync()
