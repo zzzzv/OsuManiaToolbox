@@ -1,12 +1,13 @@
-﻿using OsuManiaToolbox.Settings;
-using OsuManiaToolbox.Core.Services;
+﻿using OsuManiaToolbox.Core.Services;
+using OsuManiaToolbox.Settings;
 using OsuManiaToolbox.ViewModels;
+using System.Diagnostics;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Media;
+using System.Windows.Navigation;
 using System.Windows.Threading;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace OsuManiaToolbox;
 
@@ -96,5 +97,16 @@ public partial class MainWindow : Window
     private void CreateBeatmapWindow_Click(object sender, RoutedEventArgs e)
     {
         _windowService.ShowBeatmapWindow();
+    }
+
+    private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
+    {
+        Process.Start(new ProcessStartInfo
+        {
+            FileName = e.Uri.AbsoluteUri,
+            UseShellExecute = true
+        });
+
+        e.Handled = true;
     }
 }

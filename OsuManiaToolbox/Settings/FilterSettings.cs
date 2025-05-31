@@ -27,8 +27,9 @@ public partial class FilterHistoryItem : ObservableObject
 public class FilterSettings : ObservableObject
 {
     public ObservableCollection<FilterHistoryItem> History { get; set; } = [
-        new FilterHistoryItem{Expression = "status==R && SR()>5 && SR()<SR(EZ)", CollectionName = "PP"},
-        new FilterHistoryItem{Expression = "status==R && SR(HT)>5 && SR(HT)<SR(HT|EZ)", CollectionName = "PP HT"},
+        new FilterHistoryItem{Expression = "status==R && SR()>6 && SR()-SR(EZ)<0.2", CollectionName = "PP"},
+        new FilterHistoryItem{Expression = "status==R && SR(HT)>6 && SR(HT)-SR(HT|EZ)<0.2", CollectionName = "PP HT"},
+        new FilterHistoryItem{Expression = "status==R && SR(DT)>6 && SR(DT)-SR(DT|EZ)<0.2", CollectionName = "PP DT"},
         new FilterHistoryItem{Expression = "AccDays>30", CollectionName="超过30天", OrderBy="-AccDays", Take=10},
         new FilterHistoryItem{Expression = "Acc>93 && Acc<96", CollectionName="93-96"},
         new FilterHistoryItem{Expression = "LN/(LN+N)>0.5", CollectionName="LN>50%"},

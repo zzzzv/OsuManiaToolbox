@@ -99,7 +99,7 @@
       <Border />
       <TextBlock>
         <Run Text="项目地址"/>
-        <Hyperlink NavigateUri="https://github.com/zzzzv/OsuManiaToolbox">
+        <Hyperlink NavigateUri="https://github.com/zzzzv/OsuManiaToolbox" RequestNavigate="Hyperlink_RequestNavigate">
           https://github.com/zzzzv/OsuManiaToolbox
         </Hyperlink>
         <LineBreak/>
