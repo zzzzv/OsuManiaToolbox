@@ -78,6 +78,24 @@
         </Expander.HeaderTemplate>
         <ScrollViewer>
           <StackPanel MinWidth="200" MaxWidth="500">
+            <TextBlock TextWrapping="Wrap">
+              条件示例
+              <LineBreak/>
+              面谱：LN/(LN+N)>0.5
+              <LineBreak/>
+              HT水PP：<![CDATA[status==R && SR(HT)>5 && SR(HT)<SR(HT&EZ)]]>
+              <LineBreak/>
+              30天未新高：AccDays>30
+              <LineBreak/>
+              从Tag里搜：BM.Tags.Contains("JACK")
+              <LineBreak/>
+              可空字段写法：Scores.AccMax?.CountMiss==0
+              <LineBreak/>
+              DbBeatmap和Score类型是数据库原始字段，见
+              <Hyperlink NavigateUri="https://github.com/ppy/osu/wiki/Legacy-database-file-structure" RequestNavigate="Hyperlink_RequestNavigate">
+                官方文档
+              </Hyperlink>
+            </TextBlock>
             <DataGrid ItemsSource="{Binding Filter.MetaTable,Mode=OneTime}"
                         AutoGenerateColumns="True"
                         IsReadOnly="True"

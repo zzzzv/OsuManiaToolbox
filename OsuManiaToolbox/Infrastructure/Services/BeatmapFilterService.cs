@@ -1,4 +1,4 @@
-using DynamicExpresso;
+ï»¿using DynamicExpresso;
 using OsuParsers.Database.Objects;
 using OsuManiaToolbox.Core.Services;
 using OsuManiaToolbox.Core;
@@ -9,7 +9,7 @@ namespace OsuManiaToolbox.Infrastructure.Services;
 
 public partial class BeatmapFilterService : IBeatmapFilterService
 {
-    public delegate bool FilterFunc(FilterContext context);
+    public delegate bool? FilterFunc(FilterContext context);
     public delegate object OrderFunc(FilterContext context);
 
     private readonly IScoreDbService _scoreDb;
@@ -31,10 +31,10 @@ public partial class BeatmapFilterService : IBeatmapFilterService
     public IEnumerable<BeatmapData> Filter(IEnumerable<BeatmapData> beatmaps, string expression, string order)
     {
         expression = CheckExpression(expression);
-        _logger.Info($"±í´ïÊ½Îª {expression}");
+        _logger.Info($"è¡¨è¾¾å¼ä¸º {expression}");
         var interpreter = new Interpreter(InterpreterOptions.DefaultCaseInsensitive);
         var func = interpreter.ParseAsDelegate<FilterFunc>(expression, "this");
-        var result = beatmaps.Select(p => p as FilterContext ?? new FilterContext(p)).Where(p => func(p));
+        var result = beatmaps.Select(p => p as FilterContext ?? new FilterContext(p)).Where(p => func(p) ?? false);
         if (order != string.Empty)
         {
             var orderFunc = interpreter.ParseAsDelegate<OrderFunc>(order, "this");
@@ -48,7 +48,7 @@ public partial class BeatmapFilterService : IBeatmapFilterService
         var replaced = SingleEqualsRegex().Replace(expression, "==");
         if (replaced != expression)
         {
-            _logger.Warning($"±í´ïÊ½ {expression} Ó¦Ê¹ÓÃ == ¶ø²»ÊÇ =");
+            _logger.Warning($"è¡¨è¾¾å¼ {expression} åº”ä½¿ç”¨ == è€Œä¸æ˜¯ =");
         }
         return replaced;
     }

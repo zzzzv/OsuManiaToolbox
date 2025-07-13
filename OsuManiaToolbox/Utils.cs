@@ -1,4 +1,6 @@
-﻿using System.IO;
+﻿using System.Diagnostics;
+using System.IO;
+using System.Windows.Navigation;
 
 namespace OsuManiaToolbox;
 
@@ -15,5 +17,16 @@ public static class Utils
         } while (File.Exists(backupPath));
         File.Copy(path, backupPath, true);
         return backupPath;
+    }
+
+    public static void Navigate(RequestNavigateEventArgs e)
+    {
+        Process.Start(new ProcessStartInfo
+        {
+            FileName = e.Uri.AbsoluteUri,
+            UseShellExecute = true
+        });
+
+        e.Handled = true;
     }
 }

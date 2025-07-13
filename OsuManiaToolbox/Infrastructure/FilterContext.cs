@@ -1,4 +1,4 @@
-using OsuManiaToolbox.Core;
+ï»¿using OsuManiaToolbox.Core;
 using OsuManiaToolbox.Core.Services;
 using OsuParsers.Database.Objects;
 using OsuParsers.Enums;
@@ -25,70 +25,70 @@ public class FilterContext : BeatmapData
     public RankedStatus Q => RankedStatus.Qualified;
     public RankedStatus P => RankedStatus.Pending;
 
-    [Description("¼üÊı")]
+    [Description("é”®æ•°")]
     public int Key => (int)Bm.CircleSize;
 
-    [Description("¿ÉÓÃÖµ: R, L, Q, P")]
+    [Description("å¯ç”¨å€¼: Rã€Lã€Qã€Pã€‚ä¸ç”¨åŠ åŒå¼•å·")]
     public RankedStatus Status => Bm.RankedStatus;
 
-    [Description("Ã×ÊıÁ¿")]
+    [Description("ç±³æ•°é‡")]
     public double N => Bm.CirclesCount;
 
-    [Description("ÃæÊıÁ¿")]
+    [Description("é¢æ•°é‡")]
     public double LN => Bm.SlidersCount;
 
-    [Description("Ê±³¤(Ãë)")]
+    [Description("æ—¶é•¿(ç§’)")]
     public double Length => Bm.TotalTime / 1000.0;
 
-    [Description("Æ×Ãæ×îºóĞŞ¸ÄÖÁ½ñÌìÊı")]
+    [Description("è°±é¢æœ€åä¿®æ”¹è‡³ä»Šå¤©æ•°")]
     public double ModifyDays => (DateTime.Now - Bm.LastModifiedTime).TotalDays;
 
-    [Description("×î¸ßAcc")]
+    [Description("æœ€é«˜Accã€‚0-100")]
     public double Acc => Scores.AccMax?.ManiaAcc() ?? double.NaN;
 
-    [Description("×î¸ßAccÖÁ½ñÌìÊı")]
+    [Description("æœ€é«˜Accè‡³ä»Šå¤©æ•°")]
     public double AccDays => (DateTime.Now - Scores.AccMax?.ScoreTimestamp)?.Days ?? double.NaN;
 
-    [Description("×î¸ßAcc Mods")]
+    [Description("æœ€é«˜Acc Mods")]
     public Mods AccMods => Scores.AccMax?.Mods ?? Mods.None;
 
-    [Description("×î¸ß·ÖÊı")]
+    [Description("æœ€é«˜åˆ†æ•°")]
     public double Score => Scores.ScoreMax?.ReplayScore ?? double.NaN;
 
-    [Description("×î¸ß·ÖÊıÖÁ½ñÌìÊı")]
+    [Description("æœ€é«˜åˆ†æ•°è‡³ä»Šå¤©æ•°")]
     public double ScoreDays => (DateTime.Now - Scores.ScoreMax?.ScoreTimestamp)?.Days ?? double.NaN;
 
-    [Description("×îĞÂAcc")]
+    [Description("æœ€æ–°Accã€‚0-100")]
     public double LastAcc => Scores.Last?.ManiaAcc() ?? double.NaN;
 
-    [Description("×îĞÂ·ÖÊı")]
+    [Description("æœ€æ–°åˆ†æ•°")]
     public double LastScore => Scores.Last?.ReplayScore ?? double.NaN;
 
-    [Description("×îĞÂ³É¼¨ÖÁ½ñÌìÊı")]
+    [Description("æœ€æ–°æˆç»©è‡³ä»Šå¤©æ•°")]
     public double LastDays => (DateTime.Now - Scores.Last?.ScoreTimestamp)?.Days ?? double.NaN;
 
-    [Description("×îĞÂ³É¼¨Mods")]
+    [Description("æœ€æ–°æˆç»©Mods")]
     public Mods LastMods => Scores.Last?.Mods ?? Mods.None;
 
-    [Description("²ÎÊı¿ÉÓÃÖµ: HT, DT, EZ, HR¡£Ö§³Ö|(°´Î»»ò)ÔËËã·û")]
+    [Description("å‚æ•°å¯ç”¨å€¼: HTã€DTã€EZã€HRã€‚æ”¯æŒ|(æŒ‰ä½æˆ–)è¿ç®—ç¬¦")]
     public double SR(Mods mod = Mods.None)
     {
         return Bm.ManiaStarRating[mod];
     }
 
-    [Description("´´½¨ÕßÃû×Ö°üº¬")]
+    [Description("åˆ›å»ºè€…åå­—åŒ…å«ã€‚å‚æ•°è¦åŠ åŒå¼•å·")]
     public bool Creator(string name)
     {
         return Bm.Creator.Contains(name, StringComparison.OrdinalIgnoreCase);
     }
 
-    [Description("Æ×ÃæÄÑ¶È°üº¬")]
+    [Description("è°±é¢éš¾åº¦åŒ…å«ã€‚å‚æ•°è¦åŠ åŒå¼•å·")]
     public bool Diff(string name)
     {
         return Bm.Difficulty.Contains(name, StringComparison.OrdinalIgnoreCase);
     }
 
-    [Description("È«ÎÄËÑË÷(±êÌâ¡¢×÷Õß¡¢´´½¨Õß¡¢ÄÑ¶È)")]
+    [Description("å…¨æ–‡æœç´¢(æ ‡é¢˜ã€ä½œè€…ã€åˆ›å»ºè€…ã€éš¾åº¦)ã€‚å‚æ•°è¦åŠ åŒå¼•å·")]
     public bool Text(string text)
     {
         return new string[] { Bm.Title, Bm.TitleUnicode, Bm.Artist, Bm.ArtistUnicode, Bm.Creator, Bm.Difficulty }

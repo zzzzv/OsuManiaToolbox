@@ -1,4 +1,4 @@
-using OsuParsers.Database.Objects;
+﻿using OsuParsers.Database.Objects;
 using System.Data;
 
 namespace OsuManiaToolbox.Core.Services;

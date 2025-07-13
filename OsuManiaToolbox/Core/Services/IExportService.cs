@@ -1,4 +1,4 @@
-namespace OsuManiaToolbox.Core.Services;
+﻿namespace OsuManiaToolbox.Core.Services;
 
 public interface IExportService
 {

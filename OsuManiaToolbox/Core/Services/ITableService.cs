@@ -1,4 +1,4 @@
-using System.Data;
+﻿using System.Data;
 using System.Windows.Controls;
 
 namespace OsuManiaToolbox.Core.Services;

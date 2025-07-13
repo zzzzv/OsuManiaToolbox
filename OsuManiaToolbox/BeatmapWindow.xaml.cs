@@ -1,6 +1,7 @@
 ﻿using OsuManiaToolbox.Core.Services;
 using OsuManiaToolbox.ViewModels;
 using System.Windows;
+using System.Windows.Navigation;
 
 namespace OsuManiaToolbox;
 
@@ -25,4 +26,8 @@ public partial class BeatmapWindow : Window
         Filter.Dispose();
     }
 
+    private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
+    {
+        Utils.Navigate(e);
+    }
 }

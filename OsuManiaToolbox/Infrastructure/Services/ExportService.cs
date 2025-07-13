@@ -1,4 +1,4 @@
-using CsvHelper;
+ï»¿using CsvHelper;
 using OsuManiaToolbox.Core;
 using OsuManiaToolbox.Core.Services;
 using OsuParsers.Database.Objects;
@@ -29,20 +29,20 @@ public class ExportService : IExportService
         {
             if (string.IsNullOrEmpty(fileName))
             {
-                _logger.Error("ÎÄ¼şÃû²»ÄÜÎª¿Õ");
+                _logger.Error("æ–‡ä»¶åä¸èƒ½ä¸ºç©º");
                 return false;
             }
             
             if (!beatmaps.Any())
             {
-                _logger.Info("Ã»ÓĞ¿Éµ¼³öµÄÆ×Ãæ");
+                _logger.Info("æ²¡æœ‰å¯å¯¼å‡ºçš„è°±é¢");
                 return false;
             }
             
             var file = fileName + ".csv";
             if (File.Exists(file))
             {
-                _logger.Warning($"ÎÄ¼ş {file} ÒÑ´æÔÚ£¬×Ô¶¯¸²¸Ç");
+                _logger.Warning($"æ–‡ä»¶ {file} å·²å­˜åœ¨ï¼Œè‡ªåŠ¨è¦†ç›–");
                 File.Delete(file);
             }
 
@@ -67,7 +67,7 @@ public class ExportService : IExportService
                 }
             }
             
-            _logger.Info($"ÒÑµ¼³ö {table.Rows.Count} ĞĞÆ×ÃæĞÅÏ¢µ½ {file}");
+            _logger.Info($"å·²å¯¼å‡º {table.Rows.Count} è¡Œè°±é¢ä¿¡æ¯åˆ° {file}");
 
             var absolutePath = Path.GetFullPath(file);
             var process = new Process();
@@ -90,13 +90,13 @@ public class ExportService : IExportService
         {
             if (string.IsNullOrEmpty(collectionName))
             {
-                _logger.Error("ÊÕ²Ø¼ĞÃû³Æ²»ÄÜÎª¿Õ");
+                _logger.Error("æ”¶è—å¤¹åç§°ä¸èƒ½ä¸ºç©º");
                 return false;
             }
             
             if (!beatmapsMd5.Any())
             {
-                _logger.Info("Ã»ÓĞ·ûºÏÌõ¼şµÄÆ×Ãæ");
+                _logger.Info("æ²¡æœ‰ç¬¦åˆæ¡ä»¶çš„è°±é¢");
                 return false;
             }
             
@@ -109,12 +109,12 @@ public class ExportService : IExportService
 
             if (_collectionDb.Index.ContainsKey(collection.Name))
             {
-                _logger.Warning($"ÊÕ²Ø¼Ğ {collection.Name} ÒÑ´æÔÚ£¬×Ô¶¯¸²¸Ç");
+                _logger.Warning($"æ”¶è—å¤¹ {collection.Name} å·²å­˜åœ¨ï¼Œè‡ªåŠ¨è¦†ç›–");
                 _collectionDb.Remove(collection.Name);
             }
             
             _collectionDb.Add(collection);
-            _logger.Info($"´´½¨ÊÕ²Ø¼Ğ {collection.Name}£¬°üº¬ {collection.Count} ÕÅÆ×Ãæ");
+            _logger.Info($"åˆ›å»ºæ”¶è—å¤¹ {collection.Name}ï¼ŒåŒ…å« {collection.Count} å¼ è°±é¢");
             _collectionDb.Save();
             
             return true;
