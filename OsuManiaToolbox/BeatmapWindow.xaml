@@ -87,6 +87,8 @@
               <LineBreak/>
               30天未新高：AccDays>30
               <LineBreak/>
+              不包含：<![CDATA[Key=6 && !Creator("ice")]]>
+              <LineBreak/>
               从Tag里搜：BM.Tags.Contains("JACK")
               <LineBreak/>
               可空字段写法：Scores.AccMax?.CountMiss==0

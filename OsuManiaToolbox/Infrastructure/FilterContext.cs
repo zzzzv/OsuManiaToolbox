@@ -40,6 +40,9 @@ public class FilterContext : BeatmapData
     [Description("时长(秒)")]
     public double Length => Bm.TotalTime / 1000.0;
 
+    [Description("BPM")]
+    public double BPM => Bm.BPM();
+
     [Description("谱面最后修改至今天数")]
     public double ModifyDays => (DateTime.Now - Bm.LastModifiedTime).TotalDays;
 
@@ -74,6 +77,18 @@ public class FilterContext : BeatmapData
     public double SR(Mods mod = Mods.None)
     {
         return Bm.ManiaStarRating[mod];
+    }
+
+    [Description("标题名字包含。参数要加双引号")]
+    public bool Title(string name)
+    {
+        return Bm.TitleUnicode.Contains(name, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Description("标题名字包含。参数要加双引号")]
+    public bool Artist(string name)
+    {
+        return Bm.ArtistUnicode.Contains(name, StringComparison.OrdinalIgnoreCase);
     }
 
     [Description("创建者名字包含。参数要加双引号")]

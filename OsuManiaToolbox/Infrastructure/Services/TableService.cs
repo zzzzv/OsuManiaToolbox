@@ -24,6 +24,7 @@ public class TableService : ITableService
         AddIntColumn("LN", x => x.Bm.SlidersCount);
         AddDoubleColumn("LN%", x => (double)x.Bm.SlidersCount * 100 / (x.Bm.SlidersCount + x.Bm.CirclesCount));
         AddTimeSpanColumn("Length", x => TimeSpan.FromMilliseconds(x.Bm.TotalTime));
+        AddDoubleColumn("BPM", x => x.Bm.BPM());
         AddDoubleColumn("SR", x => x.Bm.ManiaStarRating[Mods.None]);
         AddDoubleColumn("SR(HT)", x => x.Bm.ManiaStarRating[Mods.HalfTime]);
         AddDoubleColumn("SR(DT)", x => x.Bm.ManiaStarRating[Mods.DoubleTime]);

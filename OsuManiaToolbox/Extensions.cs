@@ -45,4 +45,24 @@ public static class Extensions
             _ => string.Empty,
         };
     }
+
+    public static double BPM(this DbBeatmap bm)
+    {
+        if (bm.TimingPoints.Count == 0)
+            return double.NaN;
+
+        double bpm = double.NaN;
+        double start = 0.0;
+        double maxDuration = double.MinValue;
+        foreach (var timingPoint in bm.TimingPoints)
+        {
+            if (timingPoint.Offset - start > maxDuration)
+            {
+                maxDuration = timingPoint.Offset - start;
+                bpm = 60000 / timingPoint.BPM;
+                start = timingPoint.Offset;
+            }
+        }
+        return bpm;
+    }
 }

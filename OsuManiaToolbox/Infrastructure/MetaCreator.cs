@@ -21,13 +21,21 @@ public class MetaCreator
                 table.Rows.Add(name, method.ReturnType.Name, description);
             }
         }
+        var nullabilityContext = new NullabilityInfoContext();
         foreach (var prop in typeof(T).GetProperties())
         {
             if (TryGetDescription(prop, out var description))
             {
-                var typeName = prop.PropertyType.IsGenericType
-                    ? $"{prop.PropertyType.Name}<{string.Join(", ", prop.PropertyType.GenericTypeArguments.Select(t => t.Name))}>"
-                    : prop.PropertyType.Name;
+                var typeName = prop.PropertyType.Name;
+                if (prop.PropertyType.IsGenericType)
+                {
+                    typeName = $"{prop.PropertyType.Name}<{string.Join(", ", prop.PropertyType.GenericTypeArguments.Select(t => t.Name))}>";
+                }
+                if (nullabilityContext.Create(prop).ReadState == NullabilityState.Nullable)
+                {
+                    typeName += "?";
+                }
+
                 table.Rows.Add(prop.Name, typeName, description);
             }
         }
