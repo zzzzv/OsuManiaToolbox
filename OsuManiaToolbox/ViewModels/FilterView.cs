@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using DynamicExpresso.Exceptions;
 using OsuManiaToolbox.Core;
 using OsuManiaToolbox.Core.Services;
 using OsuManiaToolbox.Settings;
@@ -110,17 +111,26 @@ public partial class FilterView : ObservableObject, IDisposable
 
     private void FilterRun()
     {
-        var mania = _beatmapDb.Items.Where(x => x.Ruleset == Ruleset.Mania).ToArray();
-        _logger.Info($"共有{mania.Length}张Mania谱面");
-        var result = _filterService.Filter(mania, Selected.Expression, Selected.OrderBy).Skip(Selected.Skip);
-        if (Selected.Take > 0)
+        try
         {
-            result = result.Take(Selected.Take);
+            var mania = _beatmapDb.Items.Where(x => x.Ruleset == Ruleset.Mania).ToArray();
+            _logger.Info($"共有{mania.Length}张Mania谱面");
+            var result = _filterService.Filter(mania, Selected.Expression, Selected.OrderBy).Skip(Selected.Skip);
+            if (Selected.Take > 0)
+            {
+                result = result.Take(Selected.Take);
+            }
+            var arr = result.ToArray();
+            _logger.Info($"符合条件的谱面有{arr.Length}张");
+            Selected = Settings.MoveFirst(Selected);
+            Data = arr;
         }
-        var arr = result.ToArray();
-        _logger.Info($"符合条件的谱面有{arr.Length}张");
-        Selected = Settings.MoveFirst(Selected);
-        Data = arr;
+        catch (ParseException ex)
+        {
+            _logger.Error(Selected.Expression);
+            _logger.Error(new string('^', ex.Position + 1));
+            _logger.Error(ex.Message);
+        }
     }
 
     private void CreateCollectionRun()

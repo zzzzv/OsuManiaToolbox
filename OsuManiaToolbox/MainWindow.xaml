@@ -112,7 +112,7 @@
                   Background="Gray"/>
     <TabControl Grid.Column="2" Name="tabRight">
       <TabItem Header="日志">
-        <RichTextBox Name="logTextBox" IsReadOnly="True" VerticalScrollBarVisibility="Auto">
+        <RichTextBox Name="logTextBox" IsReadOnly="True" VerticalScrollBarVisibility="Auto" FontFamily="Consolas">
           <RichTextBox.Resources>
             <Style TargetType="{x:Type Paragraph}">
               <Setter Property="Margin" Value="0"/>
