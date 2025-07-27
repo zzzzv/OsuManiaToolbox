@@ -46,12 +46,32 @@ public class RegradeView
                         beatmap.ManiaGrade = grade.Value;
                         count++;
                     }
+                    if (Settings.LastPlayedSelection == LastPlayedSelection.MaxAcc)
+                    {
+                        var maxAccScore = scores.MaxBy(x => x.ManiaAcc());
+                        if (maxAccScore != null)
+                        {
+                            beatmap.LastPlayed = maxAccScore.ScoreTimestamp;
+                        }
+                    }
+                    else if (Settings.LastPlayedSelection == LastPlayedSelection.MaxScore)
+                    {
+                        var maxScore = scores.MaxBy(x => x.ReplayScore);
+                        if (maxScore != null)
+                        {
+                            beatmap.LastPlayed = maxScore.ScoreTimestamp;
+                        }
+                    }
+                }
+                else if (Settings.UnplayedIfNoScore)
+                {
+                    beatmap.IsUnplayed = true;
+                    beatmap.LastPlayed = DateTime.MinValue;
                 }
             }
             _logger.Info($"已处理{count}张谱面");
 
             _beatmapDb.Save();
-            
         }
         catch (Exception ex)
         {

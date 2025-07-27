@@ -24,13 +24,7 @@
         <CheckBox IsChecked="{Binding Settings.BackupDb}"/>
         <TextBlock Text="日志等级"/>
         <ComboBox ItemsSource="{Binding Settings.LogLevelAll,Mode=OneTime}" 
-                  SelectedItem="{Binding Settings.LogLevel}">
-          <ComboBox.ItemTemplate>
-            <DataTemplate>
-              <TextBlock Text="{Binding Converter={StaticResource EnumToStringConverter}}"/>
-            </DataTemplate>
-          </ComboBox.ItemTemplate>
-        </ComboBox>
+                  SelectedItem="{Binding Settings.LogLevel}"/>
       </DockPanel>
       <Border />
       <TextBlock>
@@ -76,6 +70,20 @@
           </DataTemplate>
         </ItemsControl.ItemTemplate>
       </ItemsControl>
+      <Separator />
+      <DockPanel>
+        <TextBlock Text="设置Played状态"/>
+        <CheckBox IsChecked="{Binding Regrade.Settings.UnplayedIfNoScore}" DockPanel.Dock="Right"/>
+        <TextBlock Text="没成绩设为Unplayed" DockPanel.Dock="Right"/>
+        <ComboBox ItemsSource="{Binding Regrade.Settings.LastPlayedSelectionAll,Mode=OneTime}"
+                  SelectedItem="{Binding Regrade.Settings.LastPlayedSelection}">
+          <ComboBox.ItemTemplate>
+            <DataTemplate>
+              <TextBlock Text="{Binding Converter={StaticResource EnumToStringConverter}}"/>
+            </DataTemplate>
+          </ComboBox.ItemTemplate>
+        </ComboBox>
+      </DockPanel>
       <Button Content="重新评级" Command="{Binding Regrade.RegradeCommand}"/>
       <Border />
       <TextBlock Text="替换SR为sunnyxxy SR，包括HT/DT，方便按难度排序选谱。但不包括EZ/HR，可以选个EZ看原始SR。"

@@ -6,10 +6,10 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
-    <Version>0.3.6</Version>
+    <Version>0.3.7</Version>
     <AssemblyName>$(MSBuildProjectName)_v$(Version)</AssemblyName>
     <PublishSingleFile>true</PublishSingleFile>
-    <PublishDir>bin\publish</PublishDir>
+    <PublishDir>$(SolutionDir)publish\</PublishDir>
     <SelfContained>false</SelfContained>
     <IncludeNativeLibrariesForSelfExtract>false</IncludeNativeLibrariesForSelfExtract>
   </PropertyGroup>

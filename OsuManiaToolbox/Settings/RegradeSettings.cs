@@ -4,6 +4,7 @@ using OsuParsers.Enums;
 using OsuParsers.Enums.Database;
 using System.Collections.ObjectModel;
 using System.Text.Json.Serialization;
+using System.ComponentModel;
 
 namespace OsuManiaToolbox.Settings;
 
@@ -17,6 +18,16 @@ public partial class ModGradeStrategyIndex(Mods mod) : ObservableObject
 
     [JsonIgnore]
     public IReadOnlyList<GradeStrategy> All => GradeStrategy.All;
+}
+
+public enum LastPlayedSelection
+{
+    [Description("保持不变")]
+    NoChange,
+    [Description("最高Acc时间")]
+    MaxAcc,
+    [Description("最高分数时间")]
+    MaxScore,
 }
 
 public partial class RegradeSettings : ObservableObject
@@ -34,6 +45,16 @@ public partial class RegradeSettings : ObservableObject
         new(Mods.Easy),
         new(Mods.HalfTime),
     ];
+
+    [ObservableProperty]
+    private LastPlayedSelection _lastPlayedSelection = LastPlayedSelection.NoChange;
+
+    [ObservableProperty]
+    private bool _unplayedIfNoScore = false;
+
+    [JsonIgnore]
+    public IReadOnlyList<LastPlayedSelection> LastPlayedSelectionAll => 
+        Enum.GetValues(typeof(LastPlayedSelection)).Cast<LastPlayedSelection>().ToArray();
 
     public GradeStrategy GetGradeStrategy(Mods mods)
     {
