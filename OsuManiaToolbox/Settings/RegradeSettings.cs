@@ -3,21 +3,20 @@ using OsuManiaToolbox.Core;
 using OsuParsers.Enums;
 using OsuParsers.Enums.Database;
 using System.Collections.ObjectModel;
-using System.Text.Json.Serialization;
 using System.ComponentModel;
 
 namespace OsuManiaToolbox.Settings;
 
-public partial class ModGradeStrategyIndex(Mods mod) : ObservableObject
+public enum ModGradeStrategyType
 {
-    public Mods Mod { get; set; } = mod;
-    public string ModAcronym => Mod.Acronym();
-
-    [ObservableProperty]
-    private int _index = 1;
-
-    [JsonIgnore]
-    public IReadOnlyList<GradeStrategy> All => GradeStrategy.All;
+    [Description("等同于NM")]
+    Normal,
+    [Description("固定为D")]
+    FixedD,
+    [Description("固定为F")]
+    FixedF,
+    [Description("保持不变")]
+    Ignore,
 }
 
 public enum LastPlayedSelection
@@ -30,35 +29,61 @@ public enum LastPlayedSelection
     MaxScore,
 }
 
+public partial class GradeThresholds : ObservableObject
+{
+    [ObservableProperty]
+    private double _s = 99;
+
+    [ObservableProperty]
+    private double _a = 98;
+
+    [ObservableProperty]
+    private double _b = 96;
+
+    [ObservableProperty]
+    private double _c = 93;
+
+    [ObservableProperty]
+    private double _d = 88;
+
+    public IEnumerable<(Grade, double)> All()
+    {
+        yield return (Grade.S, S);
+        yield return (Grade.A, A);
+        yield return (Grade.B, B);
+        yield return (Grade.C, C);
+        yield return (Grade.D, D);
+    }
+}
+
+public partial class ModGradeStrategies : ObservableObject
+{
+    [ObservableProperty]
+    private ModGradeStrategyType _nf = ModGradeStrategyType.FixedD;
+
+    [ObservableProperty]
+    private ModGradeStrategyType _ez = ModGradeStrategyType.FixedD;
+
+    [ObservableProperty]
+    private ModGradeStrategyType _ht = ModGradeStrategyType.FixedD;
+
+    public IEnumerable<(Mods, ModGradeStrategyType)> All()
+    {
+        yield return (Mods.NoFail, Nf);
+        yield return (Mods.Easy, Ez);
+        yield return (Mods.HalfTime, Ht);
+    }
+}
+
 public partial class RegradeSettings : ObservableObject
 {
-    public ObservableCollection<GradeThreshold> GradeThresholds { get; set; } = [
-        new(Grade.S, 99),
-        new(Grade.A, 98),
-        new(Grade.B, 96),
-        new(Grade.C, 93),
-        new(Grade.D, 88),
-    ];
+    public GradeThresholds GradeThresholds { get; set; } = new();
 
-    public ObservableCollection<ModGradeStrategyIndex> ModGradeStrategyIndexes { get; set; } = [
-        new(Mods.NoFail),
-        new(Mods.Easy),
-        new(Mods.HalfTime),
-    ];
+    public ModGradeStrategies ModGradeStrategies { get; set; } = new();
 
     [ObservableProperty]
     private LastPlayedSelection _lastPlayedSelection = LastPlayedSelection.NoChange;
 
     [ObservableProperty]
     private bool _unplayedIfNoScore = false;
-
-    public GradeStrategy GetGradeStrategy(Mods mods)
-    {
-        var maxIndex = ModGradeStrategyIndexes
-            .Where(x => mods.HasFlag(x.Mod))
-            .Select(x => x.Index)
-            .DefaultIfEmpty(0)
-            .Max();
-        return GradeStrategy.All[maxIndex];
-    }
 }

@@ -3,6 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:OsuManiaToolbox">
   <Application.Resources>
+    <local:EnumToStringConverter x:Key="EnumToStringConverter"/>
+    
     <Style TargetType="TextBox">
         <Setter Property="VerticalContentAlignment" Value="Center"/>
       </Style>
@@ -24,12 +26,19 @@
       <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
       <Setter Property="VerticalContentAlignment" Value="Center"/>
     </Style>
+    <Style TargetType="ComboBox">
+      <Setter Property="ItemTemplate">
+        <Setter.Value>
+          <DataTemplate>
+            <TextBlock Text="{Binding Converter={StaticResource EnumToStringConverter}}"/>
+          </DataTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
 
     <Style TargetType="{x:Type Control}">
       <Setter Property="ToolTipService.InitialShowDelay" Value="200"/>
       <Setter Property="ToolTipService.BetweenShowDelay" Value="1000"/>
     </Style>
-
-    <local:EnumToStringConverter x:Key="EnumToStringConverter"/>
   </Application.Resources>
 </Application>

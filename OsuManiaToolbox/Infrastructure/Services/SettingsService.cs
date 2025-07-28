@@ -3,6 +3,7 @@ using OsuManiaToolbox.Settings;
 using System.IO;
 using System.Reflection;
 using System.Text.Json;
+using System.Windows;
 
 namespace OsuManiaToolbox.Infrastructure.Services;
 
@@ -58,6 +59,11 @@ public class SettingsService : ISettingsService
         {
             var json = File.ReadAllText(SettingsFilePath);
             _root = JsonSerializer.Deserialize<SettingsRoot>(json) ?? new SettingsRoot();
+
+            if (_root.Version < new Version("0.3.7.2"))
+            {
+                MessageBox.Show("设置文件格式更新，成绩评级部分恢复默认值", "设置更新", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
         }
     }
 

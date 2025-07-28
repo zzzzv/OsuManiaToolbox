@@ -40,7 +40,7 @@ public class RegradeView
 
                 if (_scoreDb.Index.TryGetValue(beatmap.MD5Hash, out var scores))
                 {
-                    var grade = GetGrade(scores, Settings);
+                    var grade = GetGrade(scores);
                     if (grade != null)
                     {
                         beatmap.ManiaGrade = grade.Value;
@@ -83,18 +83,48 @@ public class RegradeView
         }
     }
 
-    private static Grade? GetGrade(IEnumerable<Score> scores, RegradeSettings settings)
+    private Grade? GetGrade(IEnumerable<Score> scores)
     {
         Grade? grade = null;
         foreach(var score in scores)
         {
-            var strategy = settings.GetGradeStrategy(score.Mods);
-            var curGrade = strategy.GetGrade(score, settings.GradeThresholds);
+            var curGrade = GetGrade(score);
             if (grade == null || curGrade < grade)
             {
                 grade = curGrade;
             }
         }
         return grade;
+    }
+
+    private Grade? GetGrade(Score score)
+    {
+        foreach (var (mod, strategy) in Settings.ModGradeStrategies.All())
+        {
+            if (score.Mods.HasFlag(mod))
+            {
+                switch (strategy)
+                {
+                    case ModGradeStrategyType.FixedD:
+                        return Grade.D;
+                    case ModGradeStrategyType.FixedF:
+                        return Grade.F;
+                    case ModGradeStrategyType.Ignore:
+                        return null;
+                }
+            }
+        }
+        if (score.ManiaAcc() == 100)
+        {
+            return Grade.X;
+        }
+        foreach (var (grade, threshold) in Settings.GradeThresholds.All())
+        {
+            if (score.ManiaAcc() >= threshold)
+            {
+                return grade;
+            }
+        }
+        return Grade.F;
     }
 }

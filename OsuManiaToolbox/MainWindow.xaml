@@ -33,56 +33,57 @@
         <Run Text=")"/>
       </TextBlock>
       <Separator />
-      <ItemsControl ItemsSource="{Binding Regrade.Settings.GradeThresholds}">
-        <ItemsControl.ItemsPanel>
-          <ItemsPanelTemplate>
-            <UniformGrid Rows="1"/>
-          </ItemsPanelTemplate>
-        </ItemsControl.ItemsPanel>
-        <ItemsControl.ItemTemplate>
-          <DataTemplate>
-            <DockPanel>
-              <TextBlock Text="{Binding Grade}"/>
-              <TextBox Text="{Binding Acc}" MinWidth="30" />
-            </DockPanel>
-          </DataTemplate>
-        </ItemsControl.ItemTemplate>
-      </ItemsControl>
-      <Separator />
+      <UniformGrid Rows="1">
+        <DockPanel>
+          <TextBlock Text="S"/>
+          <TextBox Text="{Binding Regrade.Settings.GradeThresholds.S}"/>
+        </DockPanel>
+        <DockPanel>
+          <TextBlock Text="A"/>
+          <TextBox Text="{Binding Regrade.Settings.GradeThresholds.A}"/>
+        </DockPanel>
+        <DockPanel>
+          <TextBlock Text="B"/>
+          <TextBox Text="{Binding Regrade.Settings.GradeThresholds.B}"/>
+        </DockPanel>
+        <DockPanel>
+          <TextBlock Text="C"/>
+          <TextBox Text="{Binding Regrade.Settings.GradeThresholds.C}"/>
+        </DockPanel>
+        <DockPanel>
+          <TextBlock Text="D"/>
+          <TextBox Text="{Binding Regrade.Settings.GradeThresholds.D}"/>
+        </DockPanel>
+      </UniformGrid>
       <TextBlock>
         <Run Text="只有以下模式的成绩，打不动原速的谱给个"/>
         <Run Text="D" Foreground="DeepPink" FontWeight="Bold"/>
         <Run Text="一目了然"/>
       </TextBlock>
-      <ItemsControl ItemsSource="{Binding Regrade.Settings.ModGradeStrategyIndexes}">
-        <ItemsControl.ItemsPanel>
-          <ItemsPanelTemplate>
-            <UniformGrid Rows="1" />
-          </ItemsPanelTemplate>
-        </ItemsControl.ItemsPanel>
-        <ItemsControl.ItemTemplate>
-          <DataTemplate>
-            <DockPanel>
-              <TextBlock Text="{Binding ModAcronym}"/>
-              <ComboBox ItemsSource="{Binding All,Mode=OneTime}" DisplayMemberPath="Name"
-                  SelectedIndex="{Binding Index}"/>
-            </DockPanel>
-          </DataTemplate>
-        </ItemsControl.ItemTemplate>
-      </ItemsControl>
+      <UniformGrid Rows="1">
+        <DockPanel>
+          <TextBlock Text="NF"/>
+          <ComboBox ItemsSource="{x:Static local:EnumItems.ModGradeStrategyTypes}"
+                    SelectedItem="{Binding Regrade.Settings.ModGradeStrategies.Nf}"/>
+        </DockPanel>
+        <DockPanel>
+          <TextBlock Text="EZ"/>
+          <ComboBox ItemsSource="{x:Static local:EnumItems.ModGradeStrategyTypes}"
+            SelectedItem="{Binding Regrade.Settings.ModGradeStrategies.Ez}"/>
+        </DockPanel>
+        <DockPanel>
+          <TextBlock Text="HT"/>
+          <ComboBox ItemsSource="{x:Static local:EnumItems.ModGradeStrategyTypes}"
+            SelectedItem="{Binding Regrade.Settings.ModGradeStrategies.Ht}"/>
+        </DockPanel>
+      </UniformGrid>
       <Separator />
       <DockPanel>
         <TextBlock Text="设置Played状态"/>
         <CheckBox IsChecked="{Binding Regrade.Settings.UnplayedIfNoScore}" DockPanel.Dock="Right"/>
         <TextBlock Text="没成绩设为Unplayed" DockPanel.Dock="Right"/>
         <ComboBox ItemsSource="{x:Static local:EnumItems.LastPlayedSelections}"
-                  SelectedItem="{Binding Regrade.Settings.LastPlayedSelection}">
-          <ComboBox.ItemTemplate>
-            <DataTemplate>
-              <TextBlock Text="{Binding Converter={StaticResource EnumToStringConverter}}"/>
-            </DataTemplate>
-          </ComboBox.ItemTemplate>
-        </ComboBox>
+                  SelectedItem="{Binding Regrade.Settings.LastPlayedSelection}"/>
       </DockPanel>
       <Button Content="重新评级" Command="{Binding Regrade.RegradeCommand}"/>
       <Border />

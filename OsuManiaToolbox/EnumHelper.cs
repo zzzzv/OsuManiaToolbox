@@ -15,6 +15,8 @@ public static class EnumItems
     public static IReadOnlyList<LogLevel> LogLevels => GetValues<LogLevel>();
 
     public static IReadOnlyList<LastPlayedSelection> LastPlayedSelections => GetValues<LastPlayedSelection>();
+
+    public static IReadOnlyList<ModGradeStrategyType> ModGradeStrategyTypes => GetValues<ModGradeStrategyType>();
 }
 
 public class EnumToStringConverter : IValueConverter
