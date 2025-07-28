@@ -23,7 +23,7 @@
         <TextBlock Text="写入DB时备份"/>
         <CheckBox IsChecked="{Binding Settings.BackupDb}"/>
         <TextBlock Text="日志等级"/>
-        <ComboBox ItemsSource="{Binding Settings.LogLevelAll,Mode=OneTime}" 
+        <ComboBox ItemsSource="{x:Static local:EnumItems.LogLevels}" 
                   SelectedItem="{Binding Settings.LogLevel}"/>
       </DockPanel>
       <Border />
@@ -75,7 +75,7 @@
         <TextBlock Text="设置Played状态"/>
         <CheckBox IsChecked="{Binding Regrade.Settings.UnplayedIfNoScore}" DockPanel.Dock="Right"/>
         <TextBlock Text="没成绩设为Unplayed" DockPanel.Dock="Right"/>
-        <ComboBox ItemsSource="{Binding Regrade.Settings.LastPlayedSelectionAll,Mode=OneTime}"
+        <ComboBox ItemsSource="{x:Static local:EnumItems.LastPlayedSelections}"
                   SelectedItem="{Binding Regrade.Settings.LastPlayedSelection}">
           <ComboBox.ItemTemplate>
             <DataTemplate>

@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.IO;
+using System.Reflection;
 using System.Windows.Navigation;
 
 namespace OsuManiaToolbox;
@@ -28,5 +29,10 @@ public static class Utils
         });
 
         e.Handled = true;
+    }
+
+    public static Version GetVersion()
+    {
+        return Assembly.GetEntryAssembly()?.GetName().Version ?? new Version(0, 0, 0);
     }
 }

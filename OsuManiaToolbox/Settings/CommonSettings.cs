@@ -14,7 +14,4 @@ public partial class CommonSettings : ObservableObject
 
     [ObservableProperty]
     private LogLevel _logLevel = LogLevel.Info;
-
-    [JsonIgnore]
-    public IReadOnlyList<LogLevel> LogLevelAll => Enum.GetValues(typeof(LogLevel)).Cast<LogLevel>().ToArray();
 }

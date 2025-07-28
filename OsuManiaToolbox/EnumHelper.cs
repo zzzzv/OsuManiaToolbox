@@ -1,9 +1,21 @@
-﻿using System.Globalization;
-using System.Windows.Data;
+﻿using OsuManiaToolbox.Core.Services;
+using OsuManiaToolbox.Settings;
 using System.ComponentModel;
+using System.Globalization;
 using System.Reflection;
+using System.Windows.Data;
 
-namespace OsuManiaToolbox.Converters;
+namespace OsuManiaToolbox;
+
+public static class EnumItems
+{
+    public static IReadOnlyList<T> GetValues<T>() where T : Enum
+        => (T[])Enum.GetValues(typeof(T));
+
+    public static IReadOnlyList<LogLevel> LogLevels => GetValues<LogLevel>();
+
+    public static IReadOnlyList<LastPlayedSelection> LastPlayedSelections => GetValues<LastPlayedSelection>();
+}
 
 public class EnumToStringConverter : IValueConverter
 {

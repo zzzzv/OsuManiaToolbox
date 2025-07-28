@@ -52,10 +52,6 @@ public partial class RegradeSettings : ObservableObject
     [ObservableProperty]
     private bool _unplayedIfNoScore = false;
 
-    [JsonIgnore]
-    public IReadOnlyList<LastPlayedSelection> LastPlayedSelectionAll => 
-        Enum.GetValues(typeof(LastPlayedSelection)).Cast<LastPlayedSelection>().ToArray();
-
     public GradeStrategy GetGradeStrategy(Mods mods)
     {
         var maxIndex = ModGradeStrategyIndexes

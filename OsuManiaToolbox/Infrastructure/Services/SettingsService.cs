@@ -46,6 +46,8 @@ public class SettingsService : ISettingsService
 
     public void Save()
     {
+        _root.Version = Utils.GetVersion();
+
         var json = JsonSerializer.Serialize(_root, SerializerOptions);
         File.WriteAllText(SettingsFilePath, json);
     }
@@ -61,6 +63,7 @@ public class SettingsService : ISettingsService
 
     private class SettingsRoot
     {
+        public Version Version { get; set; } = Utils.GetVersion();
         public CommonSettings Common { get; set; } = new();
         public RegradeSettings Regrade { get; set; } = new();
         public StarRatingSettings StarRating { get; set; } = new();

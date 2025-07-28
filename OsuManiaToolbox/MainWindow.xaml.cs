@@ -38,8 +38,7 @@ public partial class MainWindow : Window
 
         DataContext = this;
 
-        var version = Assembly.GetExecutingAssembly().GetName().Version ?? new Version(1, 0, 0);
-        Title = $"osu!mania工具箱 v{version.Major}.{version.Minor}.{version.Build}";
+        Title = $"osu!mania工具箱 v{Utils.GetVersion()}";
 
         logTextBox.Document.Blocks.Clear();
 
