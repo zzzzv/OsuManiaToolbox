@@ -7,6 +7,17 @@
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance Type=local:MainWindow, IsDesignTimeCreatable=False}"
         Height="500" Width="800">
+  <Window.Resources>
+    <Style TargetType="ComboBox">
+      <Setter Property="ItemTemplate">
+        <Setter.Value>
+          <DataTemplate>
+            <TextBlock Text="{Binding Converter={StaticResource EnumToStringConverter}}"/>
+          </DataTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
+  </Window.Resources>
   <Grid>
     <Grid.ColumnDefinitions>
       <ColumnDefinition Width="4*"/>

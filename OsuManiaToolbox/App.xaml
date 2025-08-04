@@ -26,15 +26,6 @@
       <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
       <Setter Property="VerticalContentAlignment" Value="Center"/>
     </Style>
-    <Style TargetType="ComboBox">
-      <Setter Property="ItemTemplate">
-        <Setter.Value>
-          <DataTemplate>
-            <TextBlock Text="{Binding Converter={StaticResource EnumToStringConverter}}"/>
-          </DataTemplate>
-        </Setter.Value>
-      </Setter>
-    </Style>
 
     <Style TargetType="{x:Type Control}">
       <Setter Property="ToolTipService.InitialShowDelay" Value="200"/>
