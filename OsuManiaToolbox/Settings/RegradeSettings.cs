@@ -1,8 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using OsuManiaToolbox.Core;
 using OsuParsers.Enums;
 using OsuParsers.Enums.Database;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
 
 namespace OsuManiaToolbox.Settings;
@@ -13,8 +11,8 @@ public enum ModGradeStrategyType
     Normal,
     [Description("固定为D")]
     FixedD,
-    [Description("固定为F")]
-    FixedF,
+    [Description("删除评级")]
+    FixedN,
     [Description("保持不变")]
     Ignore,
 }

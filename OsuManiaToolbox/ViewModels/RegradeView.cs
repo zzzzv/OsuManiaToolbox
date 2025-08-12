@@ -107,8 +107,8 @@ public class RegradeView
                 {
                     case ModGradeStrategyType.FixedD:
                         return Grade.D;
-                    case ModGradeStrategyType.FixedF:
-                        return Grade.F;
+                    case ModGradeStrategyType.FixedN:
+                        return Grade.N;
                     case ModGradeStrategyType.Ignore:
                         return null;
                 }
@@ -125,6 +125,6 @@ public class RegradeView
                 return grade;
             }
         }
-        return Grade.F;
+        return Grade.N;
     }
 }
