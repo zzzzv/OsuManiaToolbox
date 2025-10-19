@@ -80,7 +80,17 @@ public partial class StarRatingView : ObservableObject
 
     private void StarRatingTask(CancellationToken token)
     {
-        var beatmapFilter = _beatmapDb.Items.Where(x => x.Ruleset == Ruleset.Mania);
+        var beatmapFilter = _beatmapDb.Items
+            .Where(x => x.Ruleset == Ruleset.Mania)
+            .Where(x =>
+            {
+                if (x.ManiaStarRating.Count == 0)
+                {
+                    _logger.Warning($"谱面 {x.FolderName}/{x.FileName} 的原始SR尚未计算, 跳过, 尝试游戏中F5刷新");
+                    return false;
+                }
+                return true;
+            });
         if (!Settings.ForceUpdate)
         {
             beatmapFilter = beatmapFilter.Where(beatmaps => beatmaps.ManiaStarRating[Mods.None] == beatmaps.ManiaStarRating[Mods.Easy]);
