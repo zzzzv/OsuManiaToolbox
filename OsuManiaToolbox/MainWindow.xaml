@@ -98,7 +98,7 @@
       </DockPanel>
       <Button Content="重新评级" Command="{Binding Regrade.RegradeCommand}"/>
       <Border />
-      <TextBlock Text="替换SR为sunnyxxy SR，包括HT/DT，方便按难度排序选谱。但不包括EZ/HR，可以选个EZ看原始SR。"
+      <TextBlock Text="替换SR为sunnyxxy SR，包括HT/DT，方便按难度排序选谱。但不包括EZ/HR，可以选个EZ看原始SR。无效和出错谱面自动加入对应收藏夹, 可以去游戏里手动删除(有些ranked也会出错，原因待查)。"
                  TextWrapping="Wrap"/>
       <Separator />
       <StackPanel Orientation="Horizontal">

@@ -1,10 +1,11 @@
-﻿using CommunityToolkit.Mvvm.Input;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using OsuManiaToolbox.Core.Services;
+using OsuManiaToolbox.Settings;
 using OsuParsers.Enums;
 using StarRatingRebirth;
+using System.Collections.Concurrent;
 using System.IO;
-using CommunityToolkit.Mvvm.ComponentModel;
-using OsuManiaToolbox.Settings;
-using OsuManiaToolbox.Core.Services;
 
 namespace OsuManiaToolbox.ViewModels;
 
@@ -13,6 +14,7 @@ public partial class StarRatingView : ObservableObject
     private readonly IOsuFileService _fileService;
     private readonly IBeatmapDbService _beatmapDb;
     private readonly ILogger _logger;
+    private readonly IExportService _exportService;
     private CancellationTokenSource? _cancellationTokenSource;
 
     [ObservableProperty]
@@ -25,12 +27,14 @@ public partial class StarRatingView : ObservableObject
 
     public StarRatingSettings Settings { get; }
 
-    public StarRatingView(ISettingsService settingsService, IOsuFileService fileService, IBeatmapDbService beatmapDb, ILogService logService)
+    public StarRatingView(ISettingsService settingsService, IOsuFileService fileService,
+        IBeatmapDbService beatmapDb, ILogService logService, IExportService exportService)
     {
         Settings = settingsService.GetSettings<StarRatingSettings>();
         _fileService = fileService;
         _beatmapDb = beatmapDb;
         _logger = logService.GetLogger(this);
+        _exportService = exportService;
         RunCommand = new AsyncRelayCommand(RunAsync, () => !IsRunning);
         CancelCommand = new RelayCommand(CancelOperation, () => IsRunning);
         ResetCommand = new RelayCommand(Reset, () => !IsRunning);
@@ -101,8 +105,8 @@ public partial class StarRatingView : ObservableObject
 
         int processedCount = 0;
         int notSupportedCount = 0;
-        int invalidCount = 0;
-        int errorCount = 0;
+        var invalidBag = new ConcurrentBag<string>();
+        var errorBag = new ConcurrentBag<string>();
         int totalProcessed = 0;
 
         var options = new ParallelOptions
@@ -130,11 +134,11 @@ public partial class StarRatingView : ObservableObject
             }
             catch (InvalidDataException)
             {
-                Interlocked.Increment(ref invalidCount);
+                invalidBag.Add(bm.MD5Hash);
             }
             catch (Exception ex)
             {
-                Interlocked.Increment(ref errorCount);
+                errorBag.Add(bm.MD5Hash);
                 _logger.Error($"处理谱面 {bm.FolderName}/{bm.FileName} 时出错: {ex.Message}");
                 _logger.Exception(ex);
             }
@@ -144,8 +148,18 @@ public partial class StarRatingView : ObservableObject
                 _logger.Info($"处理进度: {current}/{beatmaps.Count}");
             }
         });
-        _logger.Info($"已处理{processedCount}张谱面，{notSupportedCount}张谱面不支持, {invalidCount}张谱面无效, {errorCount}张谱面出错");
-
+        _logger.Info($"已处理{processedCount}张谱面，{notSupportedCount}张谱面不支持"
+            + $"{invalidBag.Count}张谱面无效, {errorBag.Count}张谱面出错");
+        if (!invalidBag.IsEmpty)
+        {
+            _exportService.CreateCollection(invalidBag, "Invalid");
+            _logger.Info("无效谱面已加入收藏夹 'Invalid'");
+        }
+        if (!errorBag.IsEmpty)
+        {
+            _exportService.CreateCollection(errorBag, "Error");
+            _logger.Info("出错谱面已加入收藏夹 'Error'");
+        }
         _beatmapDb.Save();
     }
 }

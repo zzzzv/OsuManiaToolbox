@@ -105,14 +105,14 @@ public class CollectionDbService : DbService<CollectionDatabase, Collection>, IC
     public override void Add(Collection collection)
     {
         _db.Value.Collections.Add(collection);
-        _db.Value.CollectionCount++;
+        _db.Value.CollectionCount = _db.Value.Collections.Count;
         _index.Value.Add(collection.Name, collection);
     }
 
     public override void Remove(string name)
     {
         _db.Value.Collections.RemoveAll(c => c.Name == name);
-        _db.Value.CollectionCount--;
+        _db.Value.CollectionCount = _db.Value.Collections.Count;
         _index.Value.Remove(name);
     }
 }
