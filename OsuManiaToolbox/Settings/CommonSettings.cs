@@ -14,4 +14,11 @@ public partial class CommonSettings : ObservableObject
 
     [ObservableProperty]
     private LogLevel _logLevel = LogLevel.Info;
+
+    public event EventHandler? OsuPathChanged;
+
+    partial void OnOsuPathChanged(string value)
+    {
+        OsuPathChanged?.Invoke(this, EventArgs.Empty);
+    }
 }

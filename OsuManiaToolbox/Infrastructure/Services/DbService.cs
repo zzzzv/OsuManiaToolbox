@@ -8,24 +8,34 @@ namespace OsuManiaToolbox.Infrastructure.Services;
 public abstract class DbService<TDatabase, TItem> : IDbService<TItem> where TDatabase : class
 {
     protected IDbAdapter<TDatabase, TItem> _adapter;
-    protected readonly string _filePath;
     protected readonly CommonSettings _settings;
     protected readonly ILogger _logger;
     protected Lazy<TDatabase> _db;
     protected Lazy<Dictionary<string, TItem>> _index;
+    protected readonly Func<string> _filePathProvider;
 
-    protected DbService(IDbAdapter<TDatabase, TItem> adapter, string filePath, CommonSettings settings, ILogger logger)
+    protected DbService(IDbAdapter<TDatabase, TItem> adapter, Func<string> filePathProvider, CommonSettings settings, ILogger logger)
     {
         _adapter = adapter;
-        _filePath = filePath;
+        _filePathProvider = filePathProvider;
+        FilePath = filePathProvider();
         _settings = settings;
         _logger = logger;
         _db = new Lazy<TDatabase>(Load, LazyThreadSafetyMode.ExecutionAndPublication);
         _index = new Lazy<Dictionary<string, TItem>>(CreateIndex, LazyThreadSafetyMode.ExecutionAndPublication);
+
+        _settings.OsuPathChanged += OnOsuPathChanged;
+    }
+
+    private void OnOsuPathChanged(object? sender, EventArgs e)
+    {
+        Reload();
     }
 
     public IReadOnlyList<TItem> Items => _adapter.GetList(_db.Value);
     public IReadOnlyDictionary<string, TItem> Index => _index.Value;
+
+    protected string FilePath { get; set; }
 
     public virtual void Add(TItem item)
     {
@@ -39,36 +49,37 @@ public abstract class DbService<TDatabase, TItem> : IDbService<TItem> where TDat
 
     public void Save()
     {
-        _logger.Debug($"开始保存数据库: {_filePath}");
+        _logger.Debug($"开始保存数据库: {FilePath}");
         if (_settings.BackupDb)
         {
-            var backup = Utils.BackupFile(_filePath);
+            var backup = Utils.BackupFile(FilePath);
             _logger.Info($"数据库备份到: {backup}");
         }
-        _adapter.Save(_db.Value, _filePath);
-        _logger.Debug($"数据库保存完成: {_filePath}");
+        _adapter.Save(_db.Value, FilePath);
+        _logger.Debug($"数据库保存完成: {FilePath}");
     }
 
     public void Reload()
     {
-        _logger.Info($"刷新数据库缓存: {_filePath}");
+        FilePath = _filePathProvider();
+        _logger.Info($"刷新数据库缓存: {FilePath}");
         _db = new Lazy<TDatabase>(Load, LazyThreadSafetyMode.ExecutionAndPublication);
         _index = new Lazy<Dictionary<string, TItem>>(CreateIndex, LazyThreadSafetyMode.ExecutionAndPublication);
     }
 
     protected TDatabase Load()
     {
-        _logger.Debug($"开始加载数据库: {_filePath}");
-        var db = _adapter.Load(_filePath);
-        _logger.Debug($"数据库加载完成: {_filePath}");
+        _logger.Debug($"开始加载数据库: {FilePath}");
+        var db = _adapter.Load(FilePath);
+        _logger.Debug($"数据库加载完成: {FilePath}");
         return db;
     }
 
     protected Dictionary<string, TItem> CreateIndex()
     {
-        _logger.Debug($"开始重建索引: {_filePath}");
+        _logger.Debug($"开始重建索引: {FilePath}");
         var index = _adapter.CreateIndex(_db.Value);
-        _logger.Debug($"索引重建完成: {_filePath}");
+        _logger.Debug($"索引重建完成: {FilePath}");
         return index;
     }
 }
@@ -76,7 +87,7 @@ public abstract class DbService<TDatabase, TItem> : IDbService<TItem> where TDat
 public class BeatmapDbService : DbService<OsuDatabase, DbBeatmap>, IBeatmapDbService
 {
     public BeatmapDbService(IOsuFileService fileService, ISettingsService settingsService, ILogService logService)
-        : base(new BeatmapDbAdapter(), fileService.BeatmapDbPath, settingsService.GetSettings<CommonSettings>(), logService.GetLogger<BeatmapDbService>())
+        : base(new BeatmapDbAdapter(), () => fileService.BeatmapDbPath, settingsService.GetSettings<CommonSettings>(), logService.GetLogger<BeatmapDbService>())
     {
     }
 
@@ -98,7 +109,7 @@ public class BeatmapDbService : DbService<OsuDatabase, DbBeatmap>, IBeatmapDbSer
 public class CollectionDbService : DbService<CollectionDatabase, Collection>, ICollectionDbService
 {
     public CollectionDbService(IOsuFileService fileService, ISettingsService settingsService, ILogService logService)
-        : base(new CollectionDbAdapter(), fileService.CollectionDbPath, settingsService.GetSettings<CommonSettings>(), logService.GetLogger<CollectionDbService>())
+        : base(new CollectionDbAdapter(), () => fileService.CollectionDbPath, settingsService.GetSettings<CommonSettings>(), logService.GetLogger<CollectionDbService>())
     {
     }
 
@@ -120,7 +131,7 @@ public class CollectionDbService : DbService<CollectionDatabase, Collection>, IC
 public class ScoreDbService : DbService<ScoresDatabase, List<Score>>, IScoreDbService
 {
     public ScoreDbService(IOsuFileService fileService, ISettingsService settingsService, ILogService logService)
-        : base(new ScoreDbAdapter(), fileService.ScoreDbPath, settingsService.GetSettings<CommonSettings>(), logService.GetLogger<ScoreDbService>())
+        : base(new ScoreDbAdapter(), () => fileService.ScoreDbPath, settingsService.GetSettings<CommonSettings>(), logService.GetLogger<ScoreDbService>())
     {
     }
 }

@@ -39,6 +39,11 @@
       </DockPanel>
       <Border />
       <TextBlock>
+        <Run Text="由于要修改osu本地数据库文件，"/>
+        <Run Text="先关闭osu再打开此程序" FontWeight="Bold" Foreground="Red" FontSize="14"/>
+      </TextBlock>
+      <Border />
+      <TextBlock>
         <Run Text="自定义成绩评级规则，方便按成绩找谱(默认的放眼看去全是"/>
         <Run Text="S" Foreground="Goldenrod" FontWeight="Bold"/>
         <Run Text=")"/>
