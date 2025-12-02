@@ -61,4 +61,4 @@ jobs:
       uses: softprops/action-gh-release@v2
       with:
         tag_name: ${{ steps.extract_version.outputs.version }}
-        files: ./${{ env.PROJECT_NAME }}/bin/publish/${{ env.PROJECT_NAME }}_v*.exe
+        files: ./publish/${{ env.PROJECT_NAME }}_v*.exe
