@@ -11,7 +11,12 @@ namespace OsuManiaToolbox.ViewModels;
 
 public partial class StarRatingView : ObservableObject
 {
+    public static readonly string NotSupportedCollectionName = "Not Supported";
+    public static readonly string InvalidCollectionName = "Invalid";
+    public static readonly string ErrorCollectionName = "Error";
+
     private readonly IOsuFileService _fileService;
+    private readonly ICollectionDbService _collectionDb;
     private readonly IBeatmapDbService _beatmapDb;
     private readonly ILogger _logger;
     private readonly IExportService _exportService;
@@ -27,11 +32,12 @@ public partial class StarRatingView : ObservableObject
 
     public StarRatingSettings Settings { get; }
 
-    public StarRatingView(ISettingsService settingsService, IOsuFileService fileService,
+    public StarRatingView(ISettingsService settingsService, IOsuFileService fileService, ICollectionDbService collectionDb,
         IBeatmapDbService beatmapDb, ILogService logService, IExportService exportService)
     {
         Settings = settingsService.GetSettings<StarRatingSettings>();
         _fileService = fileService;
+        _collectionDb = collectionDb;
         _beatmapDb = beatmapDb;
         _logger = logService.GetLogger(this);
         _exportService = exportService;
@@ -84,8 +90,17 @@ public partial class StarRatingView : ObservableObject
 
     private void StarRatingTask(CancellationToken token)
     {
+        var notSupportedMD5s = _collectionDb.Index.GetValueOrDefault(NotSupportedCollectionName)?.MD5Hashes ?? [];
+        var invalidMD5s = _collectionDb.Index.GetValueOrDefault(InvalidCollectionName)?.MD5Hashes ?? [];
+        var errorMD5s = _collectionDb.Index.GetValueOrDefault(ErrorCollectionName)?.MD5Hashes ?? [];
+
+        var skipMD5s = new HashSet<string>(notSupportedMD5s
+            .Concat(invalidMD5s)
+            .Concat(errorMD5s));
+
         var beatmapFilter = _beatmapDb.Items
             .Where(x => x.Ruleset == Ruleset.Mania)
+            .Where(x => !skipMD5s.Contains(x.MD5Hash))
             .Where(x =>
             {
                 if (x.ManiaStarRating.Count == 0)
@@ -104,7 +119,7 @@ public partial class StarRatingView : ObservableObject
         _logger.Info($"共有{beatmaps.Count}张需要处理的谱面");
 
         int processedCount = 0;
-        int notSupportedCount = 0;
+        var notSupportedBag = new ConcurrentBag<string>();
         var invalidBag = new ConcurrentBag<string>();
         var errorBag = new ConcurrentBag<string>();
         int totalProcessed = 0;
@@ -130,7 +145,7 @@ public partial class StarRatingView : ObservableObject
             }
             catch (NotSupportedException)
             {
-                Interlocked.Increment(ref notSupportedCount);
+                notSupportedBag.Add(bm.MD5Hash);
             }
             catch (InvalidDataException)
             {
@@ -148,16 +163,21 @@ public partial class StarRatingView : ObservableObject
                 _logger.Info($"处理进度: {current}/{beatmaps.Count}");
             }
         });
-        _logger.Info($"已处理{processedCount}张谱面，{notSupportedCount}张谱面不支持"
+        _logger.Info($"已处理{processedCount}张谱面，{notSupportedBag.Count}张谱面不支持"
             + $"{invalidBag.Count}张谱面无效, {errorBag.Count}张谱面出错");
-        if (!invalidBag.IsEmpty)
+        if (!notSupportedBag.IsEmpty)
         {
-            _exportService.CreateCollection(invalidBag, "Invalid");
+            _exportService.CreateCollection(notSupportedMD5s.Concat(notSupportedBag), "Not Supported");
+            _logger.Info("不支持谱面已加入收藏夹 'Not Supported'");
+        }
+            if (!invalidBag.IsEmpty)
+        {
+            _exportService.CreateCollection(invalidMD5s.Concat(invalidBag), "Invalid");
             _logger.Info("无效谱面已加入收藏夹 'Invalid'");
         }
         if (!errorBag.IsEmpty)
         {
-            _exportService.CreateCollection(errorBag, "Error");
+            _exportService.CreateCollection(errorMD5s.Concat(errorBag), "Error");
             _logger.Info("出错谱面已加入收藏夹 'Error'");
         }
         _beatmapDb.Save();

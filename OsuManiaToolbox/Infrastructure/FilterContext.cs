@@ -82,13 +82,15 @@ public class FilterContext : BeatmapData
     [Description("标题名字包含。参数要加双引号")]
     public bool Title(string name)
     {
-        return Bm.TitleUnicode.Contains(name, StringComparison.OrdinalIgnoreCase);
+        return Bm.Title.Contains(name, StringComparison.OrdinalIgnoreCase) ||
+            (Bm.TitleUnicode?.Contains(name, StringComparison.OrdinalIgnoreCase) ?? false);
     }
 
     [Description("标题名字包含。参数要加双引号")]
     public bool Artist(string name)
     {
-        return Bm.ArtistUnicode.Contains(name, StringComparison.OrdinalIgnoreCase);
+        return Bm.Artist.Contains(name, StringComparison.OrdinalIgnoreCase) ||
+            (Bm.ArtistUnicode?.Contains(name, StringComparison.OrdinalIgnoreCase) ?? false);
     }
 
     [Description("创建者名字包含。参数要加双引号")]
@@ -103,11 +105,10 @@ public class FilterContext : BeatmapData
         return Bm.Difficulty.Contains(name, StringComparison.OrdinalIgnoreCase);
     }
 
-    [Description("全文搜索(标题、作者、创建者、难度)。参数要加双引号")]
+    [Description("[标题|作者|创建者|难度]包含。参数要加双引号")]
     public bool Text(string text)
     {
-        return new string[] { Bm.Title, Bm.TitleUnicode, Bm.Artist, Bm.ArtistUnicode, Bm.Creator, Bm.Difficulty }
-            .Any(x => x.Contains(text, StringComparison.OrdinalIgnoreCase));
+        return Title(text) || Artist(text) || Creator(text) || Diff(text);
     }
 
     public static DataView MetaTable

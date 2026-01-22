@@ -34,7 +34,18 @@ public partial class BeatmapFilterService : IBeatmapFilterService
         _logger.Info($"表达式为 {expression}");
         var interpreter = new Interpreter(InterpreterOptions.DefaultCaseInsensitive);
         var func = interpreter.ParseAsDelegate<FilterFunc>(expression, "this");
-        var result = beatmaps.Select(p => p as FilterContext ?? new FilterContext(p)).Where(p => func(p) ?? false);
+        var result = beatmaps.Select(p => p as FilterContext ?? new FilterContext(p)).Where(p => {
+            try
+            {
+                return func(p) ?? false;
+
+            }
+            catch (Exception ex)
+            {
+                _logger.Error($"谱面 {p.Bm.FolderName}/{p.Bm.FileName} 表达式计算出错: {ex.Message}");
+                return false;
+            }
+        });
         if (order != string.Empty)
         {
             var orderFunc = interpreter.ParseAsDelegate<OrderFunc>(order, "this");
