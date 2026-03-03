@@ -22,7 +22,11 @@ public partial class FilterHistoryItem : ObservableObject
 
     [ObservableProperty]
     private string _csvName = string.Empty;
+
+    [ObservableProperty]
+    private bool _markedAsBatch = false;
 }
+
 
 public class FilterSettings : ObservableObject
 {

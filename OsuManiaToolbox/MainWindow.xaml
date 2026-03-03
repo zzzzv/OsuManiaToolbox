@@ -117,10 +117,18 @@
         <Button Content="恢复原始SR" Command="{Binding StarRating.ResetCommand}"/>
       </UniformGrid>
       <Border />
-      <DockPanel>
-        <TextBlock Text="谱面筛选，生成收藏夹或输出到CSV"/>
-        <Button Content="新建谱面浏览器窗口" Click="CreateBeatmapWindow_Click"/>
-      </DockPanel>
+      <StackPanel Orientation="Vertical">
+        <DockPanel>
+          <TextBlock Text="谱面筛选，生成收藏夹或输出到CSV"/>
+          <Button Content="新建谱面浏览器窗口" Click="CreateBeatmapWindow_Click"/>
+        </DockPanel>
+        <Separator />
+        <StackPanel Orientation="Horizontal">
+          <TextBlock Text="批量导出, 先在谱面浏览器勾选批量任务"/>
+          <Button Content="CSV" Command="{Binding BatchFilterExport.BatchWriteCsv}"/>
+          <Button Content="收藏夹" Command="{Binding BatchFilterExport.BatchCreateCollection}"/>
+        </StackPanel>
+      </StackPanel>
       <Border />
       <TextBlock>
         <Run Text="项目地址"/>

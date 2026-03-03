@@ -63,6 +63,7 @@
               </StackPanel>
             </TabItem>
           </TabControl>
+          <CheckBox Content="批量任务" IsChecked="{Binding Filter.Selected.MarkedAsBatch}"/>
         </StackPanel>
       </Border>
     </DockPanel>

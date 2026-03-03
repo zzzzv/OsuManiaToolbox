@@ -20,13 +20,15 @@ public partial class MainWindow : Window
     public CommonSettings Settings => _settingsService.GetSettings<CommonSettings>();
     public RegradeView Regrade { get; }
     public StarRatingView StarRating { get; }
+    public BatchFilterExportView BatchFilterExport { get; }
 
     public MainWindow(
         ILogService logService,
         ISettingsService settingsService,
         IWindowService windowService,
         RegradeView regradeView,
-        StarRatingView starRatingView)
+        StarRatingView starRatingView,
+        BatchFilterExportView batchFilterExportView)
     {
         InitializeComponent();
 
@@ -35,6 +37,7 @@ public partial class MainWindow : Window
         _windowService = windowService;
         Regrade = regradeView;
         StarRating = starRatingView;
+        BatchFilterExport = batchFilterExportView;
 
         DataContext = this;
 
